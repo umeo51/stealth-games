@@ -1,0 +1,173 @@
+.game-area {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.game-area.hidden {
+  background: #f8f9fa;
+}
+
+.game-area.visible {
+  background: white;
+}
+
+.analysis-placeholder {
+  padding: 2rem;
+  text-align: center;
+  color: #6c757d;
+}
+
+.analysis-placeholder h4 {
+  margin: 0 0 1rem 0;
+  color: #495057;
+  font-size: 1rem;
+}
+
+.loading-bar {
+  width: 100%;
+  height: 4px;
+  background-color: #e9ecef;
+  border-radius: 2px;
+  margin: 1rem 0;
+  overflow: hidden;
+}
+
+.loading-progress {
+  width: 67%;
+  height: 100%;
+  background-color: #007bff;
+  border-radius: 2px;
+  animation: loading 3s ease-in-out infinite;
+}
+
+@keyframes loading {
+  0% { transform: translateX(-100%); }
+  50% { transform: translateX(0%); }
+  100% { transform: translateX(100%); }
+}
+
+.fake-metrics {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.metric {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.875rem;
+}
+
+.metric .label {
+  color: #6c757d;
+}
+
+.metric .value {
+  color: #495057;
+  font-weight: 500;
+}
+
+.game-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  border-bottom: 1px solid #e9ecef;
+  background: #f8f9fa;
+}
+
+.game-tabs {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.game-tab {
+  padding: 0.5rem 1rem;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+  background: white;
+  color: #6c757d;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.game-tab:hover {
+  background: #f8f9fa;
+  border-color: #adb5bd;
+}
+
+.game-tab.active {
+  background: #007bff;
+  color: white;
+  border-color: #007bff;
+}
+
+.stats {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.games-completed {
+  background: #28a745;
+  color: white;
+  padding: 0.25rem 0.5rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.game-content {
+  padding: 1rem;
+  min-height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.game-placeholder {
+  text-align: center;
+  color: #6c757d;
+  padding: 2rem;
+}
+
+.game-placeholder h4 {
+  margin: 0 0 0.5rem 0;
+  color: #495057;
+}
+
+.game-placeholder p {
+  margin: 0;
+  font-size: 0.875rem;
+}
+
+@media (max-width: 768px) {
+  .game-header {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: stretch;
+  }
+  
+  .game-tabs {
+    justify-content: center;
+  }
+  
+  .game-tab {
+    flex: 1;
+    text-align: center;
+  }
+  
+  .stats {
+    justify-content: center;
+  }
+  
+  .game-content {
+    padding: 0.5rem;
+  }
+}

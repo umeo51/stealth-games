@@ -88,57 +88,7 @@
 }
 
 .game-widget {
-  transition: all 0.3s ease;
-}
-
-.game-widget.hidden .game-container {
-  height: 150px;
-}
-
-.game-widget.visible .game-container {
-  height: 300px;
-}
-
-.game-container {
-  background: #f8f9fa;
-  border-radius: 4px;
-  padding: 1rem;
-  transition: height 0.3s ease;
-  overflow: hidden;
-}
-
-.game-placeholder {
-  text-align: center;
-  color: #6c757d;
-  padding: 2rem 0;
-}
-
-.tool-placeholder {
-  text-align: center;
-  color: #6c757d;
-}
-
-.loading-bar {
-  width: 100%;
-  height: 4px;
-  background-color: #e9ecef;
-  border-radius: 2px;
-  margin-top: 1rem;
-  overflow: hidden;
-}
-
-.loading-progress {
-  width: 60%;
-  height: 100%;
-  background-color: #007bff;
-  border-radius: 2px;
-  animation: loading 2s ease-in-out infinite;
-}
-
-@keyframes loading {
-  0% { transform: translateX(-100%); }
-  50% { transform: translateX(0%); }
-  100% { transform: translateX(100%); }
+  /* GameAreaコンポーネント内でスタイルを管理 */
 }
 
 .trending-list {

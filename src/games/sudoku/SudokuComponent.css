@@ -1,0 +1,251 @@
+.sudoku-container {
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 1rem;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.sudoku-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.sudoku-header h3 {
+  margin: 0;
+  color: #2c3e50;
+  font-size: 1.2rem;
+}
+
+.game-info {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.difficulty {
+  font-size: 0.875rem;
+  color: #6c757d;
+  text-transform: capitalize;
+}
+
+.complete-badge {
+  background: #28a745;
+  color: white;
+  padding: 0.25rem 0.5rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.sudoku-grid {
+  display: grid;
+  grid-template-rows: repeat(9, 1fr);
+  gap: 1px;
+  background: #2c3e50;
+  border: 2px solid #2c3e50;
+  margin-bottom: 1rem;
+  aspect-ratio: 1;
+}
+
+.sudoku-row {
+  display: grid;
+  grid-template-columns: repeat(9, 1fr);
+  gap: 1px;
+}
+
+.sudoku-cell {
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  position: relative;
+  aspect-ratio: 1;
+  transition: all 0.2s ease;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.sudoku-cell:hover {
+  background: #f8f9fa;
+}
+
+.sudoku-cell.fixed {
+  background: #e9ecef;
+  color: #2c3e50;
+  cursor: default;
+}
+
+.sudoku-cell.fixed:hover {
+  background: #e9ecef;
+}
+
+.sudoku-cell.selected {
+  background: #007bff !important;
+  color: white;
+}
+
+.sudoku-cell.highlighted {
+  background: #e3f2fd;
+}
+
+.sudoku-cell.invalid {
+  background: #ffebee;
+  color: #d32f2f;
+}
+
+.sudoku-cell.invalid.selected {
+  background: #d32f2f !important;
+  color: white;
+}
+
+.cell-value {
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.cell-notes {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  width: 100%;
+  height: 100%;
+  padding: 2px;
+  gap: 1px;
+}
+
+.note {
+  font-size: 0.6rem;
+  color: #6c757d;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 3x3ボックスの境界線 */
+.sudoku-row:nth-child(3n) .sudoku-cell {
+  border-bottom: 2px solid #2c3e50;
+}
+
+.sudoku-cell:nth-child(3n) {
+  border-right: 2px solid #2c3e50;
+}
+
+.sudoku-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.number-pad {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.5rem;
+}
+
+.number-btn {
+  padding: 0.75rem;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+  background: white;
+  color: #495057;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.number-btn:hover:not(:disabled) {
+  background: #f8f9fa;
+  border-color: #adb5bd;
+}
+
+.number-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.mode-btn,
+.clear-btn,
+.hint-btn {
+  flex: 1;
+  padding: 0.5rem;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+  background: white;
+  color: #495057;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.mode-btn:hover,
+.clear-btn:hover,
+.hint-btn:hover {
+  background: #f8f9fa;
+  border-color: #adb5bd;
+}
+
+.mode-btn.active {
+  background: #007bff;
+  color: white;
+  border-color: #007bff;
+}
+
+.clear-btn:disabled,
+.hint-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.difficulty-buttons {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.difficulty-buttons button {
+  flex: 1;
+  padding: 0.5rem;
+  border: 1px solid #28a745;
+  border-radius: 4px;
+  background: white;
+  color: #28a745;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.difficulty-buttons button:hover {
+  background: #28a745;
+  color: white;
+}
+
+@media (max-width: 480px) {
+  .sudoku-container {
+    padding: 0.5rem;
+  }
+  
+  .number-pad {
+    grid-template-columns: repeat(5, 1fr);
+  }
+  
+  .cell-value {
+    font-size: 1rem;
+  }
+  
+  .note {
+    font-size: 0.5rem;
+  }
+}

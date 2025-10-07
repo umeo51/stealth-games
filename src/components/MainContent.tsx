@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import NewsSection from './NewsSection';
+import GameArea from './GameArea';
 import './MainContent.css';
 
 const MainContent: React.FC = () => {
@@ -39,23 +40,9 @@ const MainContent: React.FC = () => {
           </div>
 
           {/* ゲームエリア */}
-          <div className={`game-widget ${gameVisible ? 'visible' : 'hidden'}`}>
+          <div className="game-widget">
             <h3>分析ツール</h3>
-            <div className="game-container">
-              {gameVisible ? (
-                <div className="game-placeholder">
-                  <p>ゲームエリア</p>
-                  <p>（数独、ソリティアなど）</p>
-                </div>
-              ) : (
-                <div className="tool-placeholder">
-                  <p>データ分析中...</p>
-                  <div className="loading-bar">
-                    <div className="loading-progress"></div>
-                  </div>
-                </div>
-              )}
-            </div>
+            <GameArea visible={gameVisible} />
           </div>
 
           <div className="widget">
