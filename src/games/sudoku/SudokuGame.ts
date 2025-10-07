@@ -13,11 +13,13 @@ export class SudokuGame {
   private grid: SudokuGrid;
   private solution: number[][];
   private difficulty: 'easy' | 'medium' | 'hard';
+  private startTime: number;
 
   constructor(difficulty: 'easy' | 'medium' | 'hard' = 'easy') {
     this.difficulty = difficulty;
     this.grid = this.createEmptyGrid();
     this.solution = [];
+    this.startTime = Date.now();
     this.generatePuzzle();
   }
 
@@ -245,5 +247,10 @@ export class SudokuGame {
   // 難易度を取得
   getDifficulty(): string {
     return this.difficulty;
+  }
+
+  // 開始時間を取得
+  getStartTime(): number {
+    return this.startTime;
   }
 }

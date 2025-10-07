@@ -3,7 +3,7 @@ import { SudokuGame, SudokuGrid } from './SudokuGame';
 import './SudokuComponent.css';
 
 interface SudokuComponentProps {
-  onGameComplete?: () => void;
+  onGameComplete?: (won: boolean, time: number, difficulty: string) => void;
 }
 
 const SudokuComponent: React.FC<SudokuComponentProps> = ({ onGameComplete }) => {
@@ -20,7 +20,8 @@ const SudokuComponent: React.FC<SudokuComponentProps> = ({ onGameComplete }) => 
   useEffect(() => {
     if (game.isComplete() && !gameComplete) {
       setGameComplete(true);
-      onGameComplete?.();
+      const timeElapsed = Math.floor((Date.now() - game.getStartTime()) / 1000);
+      onGameComplete?.(true, timeElapsed, game.getDifficulty());
     }
   }, [grid, game, gameComplete, onGameComplete]);
 
