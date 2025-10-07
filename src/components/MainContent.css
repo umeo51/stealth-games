@@ -37,46 +37,7 @@
   color: #495057;
 }
 
-.news-section {
-  background: white;
-  border-radius: 8px;
-  padding: 1.5rem;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-
-.news-list {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
-
-.news-item {
-  padding-bottom: 1.5rem;
-  border-bottom: 1px solid #e9ecef;
-}
-
-.news-item:last-child {
-  border-bottom: none;
-  padding-bottom: 0;
-}
-
-.news-item h3 {
-  margin: 0 0 0.5rem 0;
-  color: #2c3e50;
-  font-size: 1.1rem;
-  line-height: 1.4;
-}
-
-.news-item p {
-  margin: 0 0 0.5rem 0;
-  color: #6c757d;
-  line-height: 1.6;
-}
-
-.news-time {
-  font-size: 0.875rem;
-  color: #adb5bd;
-}
+/* ニュースセクションのスタイルはNewsSection.cssに移動 */
 
 .sidebar {
   display: flex;
