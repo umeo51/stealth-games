@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import NewsSection from './NewsSection';
 import GameArea from './GameArea';
+import AdManager from './AdManager';
 import './MainContent.css';
 
 const MainContent: React.FC = () => {
@@ -12,6 +13,9 @@ const MainContent: React.FC = () => {
 
   return (
     <div className="main-content">
+      {/* ヘッダー広告 */}
+      <AdManager position="header" size="responsive" />
+      
       <div className="content-grid">
         {/* ニュースセクション */}
         <NewsSection 
@@ -21,6 +25,9 @@ const MainContent: React.FC = () => {
 
         {/* サイドバー（ゲームエリア） */}
         <aside className="sidebar">
+          {/* サイドバー広告 */}
+          <AdManager position="sidebar" size="small" />
+          
           <div className="widget">
             <h3>市場データ</h3>
             <div className="market-data">
@@ -43,6 +50,11 @@ const MainContent: React.FC = () => {
           <div className="game-widget">
             <h3>分析ツール</h3>
             <GameArea visible={gameVisible} />
+            
+            {/* ゲームエリア内広告（カモフラージュ） */}
+            {gameVisible && (
+              <AdManager position="game-area" size="medium" />
+            )}
           </div>
 
           <div className="widget">
@@ -54,8 +66,14 @@ const MainContent: React.FC = () => {
               <li>サステナブル経営の重要性</li>
             </ul>
           </div>
+          
+          {/* サイドバー下部広告 */}
+          <AdManager position="sidebar" size="small" />
         </aside>
       </div>
+      
+      {/* フッター広告 */}
+      <AdManager position="footer" size="responsive" />
     </div>
   );
 };

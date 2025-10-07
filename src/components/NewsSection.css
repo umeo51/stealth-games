@@ -198,6 +198,14 @@
   color: #adb5bd;
 }
 
+.news-ad-container {
+  margin: 1.5rem 0;
+  padding: 1rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
+}
+
 @media (max-width: 768px) {
   .section-header {
     flex-direction: column;

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { RefreshCw } from 'lucide-react';
 import { newsService, NewsArticle } from '../services/newsService';
+import AdManager from './AdManager';
 import './NewsSection.css';
 
 interface NewsSectionProps {
@@ -97,24 +98,33 @@ const NewsSection: React.FC<NewsSectionProps> = ({ onToggleGame, gameVisible }) 
       </div>
       
       <div className="news-list">
-        {news.map((article) => (
-          <article key={article.uuid} className="news-item">
-            <h3 className="news-title">{article.title}</h3>
-            <p className="news-description">{article.description}</p>
-            <div className="news-meta">
-              <span className="news-source">{article.source}</span>
-              <span className="news-time">{article.published_at}</span>
-              {article.categories.length > 0 && (
-                <div className="news-categories">
-                  {article.categories.slice(0, 2).map((category, index) => (
-                    <span key={index} className="news-category">
-                      {category}
-                    </span>
-                  ))}
-                </div>
-              )}
-            </div>
-          </article>
+        {news.map((article, index) => (
+          <React.Fragment key={article.uuid}>
+            <article className="news-item">
+              <h3 className="news-title">{article.title}</h3>
+              <p className="news-description">{article.description}</p>
+              <div className="news-meta">
+                <span className="news-source">{article.source}</span>
+                <span className="news-time">{article.published_at}</span>
+                {article.categories.length > 0 && (
+                  <div className="news-categories">
+                    {article.categories.slice(0, 2).map((category, catIndex) => (
+                      <span key={catIndex} className="news-category">
+                        {category}
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </article>
+            
+            {/* 2記事ごとにコンテンツ内広告を挿入 */}
+            {(index + 1) % 2 === 0 && index < news.length - 1 && (
+              <div className="news-ad-container">
+                <AdManager position="content" size="responsive" />
+              </div>
+            )}
+          </React.Fragment>
         ))}
       </div>
       

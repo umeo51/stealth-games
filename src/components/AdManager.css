@@ -1,0 +1,179 @@
+.ad-manager {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 1rem 0;
+}
+
+.ad-manager-sidebar {
+  position: sticky;
+  top: 2rem;
+  margin: 0;
+}
+
+.ad-manager-header {
+  width: 100%;
+  margin: 0.5rem 0;
+}
+
+.ad-manager-footer {
+  width: 100%;
+  margin: 1rem 0 0 0;
+  padding-top: 1rem;
+  border-top: 1px solid #e9ecef;
+}
+
+.ad-manager-content {
+  width: 100%;
+  margin: 2rem 0;
+  padding: 1rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
+}
+
+.ad-manager-game-area {
+  width: 100%;
+  margin: 1rem 0;
+  padding: 0.75rem;
+  background: white;
+  border-radius: 6px;
+  border: 1px solid #dee2e6;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.ad-label {
+  margin-bottom: 0.5rem;
+  text-align: center;
+}
+
+.ad-label span {
+  background: #6c757d;
+  color: white;
+  padding: 0.25rem 0.5rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.ad-disclaimer {
+  margin-top: 0.5rem;
+  text-align: center;
+  color: #6c757d;
+}
+
+.ad-disclaimer small {
+  font-size: 0.7rem;
+}
+
+/* 広告の基本スタイル */
+.ad-sidebar {
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.ad-header,
+.ad-footer {
+  width: 100%;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.ad-content {
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.ad-game-area {
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+/* プレースホルダーのスタイル調整 */
+.ad-placeholder {
+  transition: all 0.3s ease;
+}
+
+.ad-placeholder:hover {
+  background: #e9ecef !important;
+  border-color: #adb5bd !important;
+}
+
+/* レスポンシブ対応 */
+@media (max-width: 1200px) {
+  .ad-manager-sidebar {
+    position: static;
+    margin: 1rem 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .ad-manager {
+    margin: 0.5rem 0;
+  }
+  
+  .ad-manager-content {
+    margin: 1rem 0;
+    padding: 0.75rem;
+  }
+  
+  .ad-manager-game-area {
+    margin: 0.5rem 0;
+    padding: 0.5rem;
+  }
+  
+  .ad-manager-header,
+  .ad-manager-footer {
+    margin: 0.5rem 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .ad-manager-content {
+    padding: 0.5rem;
+  }
+  
+  .ad-label span {
+    font-size: 0.7rem;
+    padding: 0.2rem 0.4rem;
+  }
+}
+
+/* 広告ブロッカー対応 */
+.ad-manager[style*="display: none"],
+.ad-manager[style*="visibility: hidden"] {
+  display: flex !important;
+  visibility: visible !important;
+}
+
+.ad-manager[style*="display: none"] .ad-placeholder,
+.ad-manager[style*="visibility: hidden"] .ad-placeholder {
+  background: #fff3cd !important;
+  border-color: #ffeaa7 !important;
+  color: #856404 !important;
+}
+
+.ad-manager[style*="display: none"] .ad-placeholder::after,
+.ad-manager[style*="visibility: hidden"] .ad-placeholder::after {
+  content: "広告ブロッカーが検出されました。サイトの運営にご協力ください。";
+  font-size: 0.8rem;
+}
+
+/* 広告の読み込み状態 */
+.ad-loading {
+  background: linear-gradient(90deg, #f8f9fa 25%, #e9ecef 50%, #f8f9fa 75%);
+  background-size: 200% 100%;
+  animation: loading-shimmer 2s infinite;
+}
+
+@keyframes loading-shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
