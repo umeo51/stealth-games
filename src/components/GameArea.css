@@ -186,3 +186,55 @@
     padding: 0.5rem;
   }
 }
+
+.game-toggle-container {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 1rem;
+}
+
+.stealth-toggle {
+  background: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.stealth-toggle:hover {
+  background: #0056b3;
+  transform: translateY(-1px);
+}
+
+.stealth-toggle.hide {
+  background: #6c757d;
+}
+
+.stealth-toggle.hide:hover {
+  background: #545b62;
+}
+
+.game-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.game-controls {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.game-area {
+  min-height: 400px;
+  padding: 1rem;
+}
+
+.game-area.visible {
+  min-height: 500px;
+}

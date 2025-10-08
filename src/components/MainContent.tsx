@@ -49,7 +49,7 @@ const MainContent: React.FC = () => {
           {/* ゲームエリア */}
           <div className="game-widget">
             <h3>分析ツール</h3>
-            <GameArea visible={gameVisible} />
+            <GameArea visible={gameVisible} onToggleVisibility={toggleGameVisibility} />
             
             {/* ゲームエリア内広告（カモフラージュ） */}
             {gameVisible && (

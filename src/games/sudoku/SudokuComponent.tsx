@@ -26,7 +26,6 @@ const SudokuComponent: React.FC<SudokuComponentProps> = ({ onGameComplete }) => 
   }, [grid, game, gameComplete, onGameComplete]);
 
   const handleCellClick = (row: number, col: number) => {
-    if (grid[row][col].isFixed) return;
     setSelectedCell({ row, col });
   };
 
@@ -35,19 +34,18 @@ const SudokuComponent: React.FC<SudokuComponentProps> = ({ onGameComplete }) => 
     
     const { row, col } = selectedCell;
     
+    // 初期数字は変更不可
+    if (grid[row][col].isFixed) return;
+    
     if (noteMode) {
-      const currentNotes = [...grid[row][col].notes];
-      const noteIndex = currentNotes.indexOf(num);
-      
-      if (noteIndex > -1) {
-        currentNotes.splice(noteIndex, 1);
-      } else {
-        currentNotes.push(num);
-        currentNotes.sort();
-      }
-      
-      game.setCellNotes(row, col, currentNotes);
+      // メモモード
+      const currentNotes = game.getCellNotes(row, col);
+      const newNotes = currentNotes.includes(num)
+        ? currentNotes.filter((n: number) => n !== num)
+        : [...currentNotes, num].sort();
+      game.setCellNotes(row, col, newNotes);
     } else {
+      // 通常の入力モード
       game.setCellValue(row, col, num);
       // 数字を入力したらメモをクリア
       game.setCellNotes(row, col, []);

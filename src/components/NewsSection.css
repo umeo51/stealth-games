@@ -227,3 +227,11 @@
     margin-left: 0;
   }
 }
+
+.news-summary {
+  color: #555;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  margin: 0.75rem 0;
+  text-align: justify;
+}

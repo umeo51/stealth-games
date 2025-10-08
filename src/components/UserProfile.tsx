@@ -95,7 +95,7 @@ const UserProfile: React.FC<UserProfileProps> = ({ isOpen, onClose }) => {
         <div className="profile-header">
           <div className="profile-info">
             <div className="avatar">
-              <User size={32} />
+              <img src="/default-avatar.png" alt="アバター" />
             </div>
             <div className="user-details">
               {editMode ? (

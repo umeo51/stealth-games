@@ -232,9 +232,79 @@
   color: white;
 }
 
-@media (max-width: 480px) {
+@media (max-width: 768px) {
   .sudoku-container {
     padding: 0.5rem;
+    max-width: 100%;
+  }
+  
+  .sudoku-grid {
+    gap: 1px;
+    width: 100%;
+    max-width: 320px;
+    margin: 0 auto;
+  }
+  
+  .sudoku-row {
+    display: flex;
+    width: 100%;
+  }
+  
+  .sudoku-cell {
+    width: calc(100% / 9);
+    height: 35px;
+    min-width: 30px;
+    font-size: 0.875rem;
+    flex: 1;
+  }
+  
+  .cell-notes {
+    font-size: 0.5rem;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+  }
+  
+  .sudoku-controls {
+    gap: 0.25rem;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  
+  .control-btn {
+    padding: 0.5rem;
+    font-size: 0.75rem;
+    min-width: 60px;
+  }
+  
+  .number-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.25rem;
+    max-width: 320px;
+    margin: 0 auto;
+  }
+  
+  .number-btn {
+    width: 35px;
+    height: 35px;
+    font-size: 0.875rem;
+    flex: 0 0 auto;
+  }
+}
+
+@media (max-width: 480px) {
+  .sudoku-container {
+    padding: 0.25rem;
+  }
+  
+  .sudoku-grid {
+    max-width: 280px;
+  }
+  
+  .sudoku-cell {
+    height: 30px;
+    min-width: 28px;
   }
   
   .number-pad {
@@ -242,10 +312,16 @@
   }
   
   .cell-value {
-    font-size: 1rem;
+    font-size: 0.875rem;
   }
   
   .note {
-    font-size: 0.5rem;
+    font-size: 0.4rem;
+  }
+  
+  .number-btn {
+    width: 30px;
+    height: 30px;
+    font-size: 0.75rem;
   }
 }

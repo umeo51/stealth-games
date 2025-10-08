@@ -8,11 +8,12 @@ import './GameArea.css';
 
 interface GameAreaProps {
   visible: boolean;
+  onToggleVisibility: () => void;
 }
 
 type GameType = 'sudoku' | 'solitaire' | 'minesweeper' | null;
 
-const GameArea: React.FC<GameAreaProps> = ({ visible }) => {
+const GameArea: React.FC<GameAreaProps> = ({ visible, onToggleVisibility }) => {
   const [currentGame, setCurrentGame] = useState<GameType>('sudoku');
   const [gamesCompleted, setGamesCompleted] = useState(0);
   const { user } = useAuth();
@@ -86,6 +87,15 @@ const GameArea: React.FC<GameAreaProps> = ({ visible }) => {
   if (!visible) {
     return (
       <div className="game-area hidden">
+        <div className="game-toggle-container">
+          <button 
+            className="stealth-toggle"
+            onClick={onToggleVisibility}
+            title="ゲームを表示"
+          >
+            👁️ ツール表示
+          </button>
+        </div>
         <div className="analysis-placeholder">
           <h4>データ分析中...</h4>
           <div className="loading-bar">
@@ -130,11 +140,20 @@ const GameArea: React.FC<GameAreaProps> = ({ visible }) => {
           </button>
         </div>
         
-        {gamesCompleted > 0 && (
-          <div className="stats">
-            <span className="games-completed">完了: {gamesCompleted}</span>
-          </div>
-        )}
+        <div className="game-controls">
+          <button 
+            className="stealth-toggle hide"
+            onClick={onToggleVisibility}
+            title="ゲームを隠す"
+          >
+            👁️‍🗨️ 隠す
+          </button>
+          {gamesCompleted > 0 && (
+            <div className="stats">
+              <span className="games-completed">完了: {gamesCompleted}</span>
+            </div>
+          )}
+        </div>
       </div>
 
       <div className="game-content">

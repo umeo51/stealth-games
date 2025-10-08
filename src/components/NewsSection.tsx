@@ -87,13 +87,6 @@ const NewsSection: React.FC<NewsSectionProps> = ({ onToggleGame, gameVisible }) 
           >
             <RefreshCw size={16} />
           </button>
-          <button 
-            className="stealth-toggle"
-            onClick={onToggleGame}
-            title={gameVisible ? "ゲームを隠す" : "ゲームを表示"}
-          >
-            {gameVisible ? "👁️‍🗨️" : "👁️"}
-          </button>
         </div>
       </div>
       
@@ -101,20 +94,16 @@ const NewsSection: React.FC<NewsSectionProps> = ({ onToggleGame, gameVisible }) 
         {news.map((article, index) => (
           <React.Fragment key={article.uuid}>
             <article className="news-item">
-              <h3 className="news-title">{article.title}</h3>
-              <p className="news-description">{article.description}</p>
+              <h4>{article.title}</h4>
+              <p className="news-summary">{article.snippet}</p>
               <div className="news-meta">
-                <span className="news-source">{article.source}</span>
-                <span className="news-time">{article.published_at}</span>
-                {article.categories.length > 0 && (
-                  <div className="news-categories">
-                    {article.categories.slice(0, 2).map((category, catIndex) => (
-                      <span key={catIndex} className="news-category">
-                        {category}
-                      </span>
-                    ))}
-                  </div>
-                )}
+                <span className="source">{article.source}</span>
+                <span className="time">{newsService.formatTimeAgo(article.published_at)}</span>
+                <div className="tags">
+                  {article.categories.slice(0, 2).map((category) => (
+                    <span key={category} className="tag">{category}</span>
+                  ))}
+                </div>
               </div>
             </article>
             
