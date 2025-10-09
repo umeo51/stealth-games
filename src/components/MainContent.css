@@ -1,12 +1,15 @@
 .main-content {
   width: 100%;
+  max-width: 100%;
+  padding: 0;
 }
 
 .content-grid {
   display: grid;
-  grid-template-columns: 1fr 300px;
-  gap: 2rem;
+  grid-template-columns: 1fr 320px;
+  gap: 1.5rem;
   align-items: start;
+  min-height: calc(100vh - 200px);
 }
 
 .section-header {
@@ -43,7 +46,11 @@
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
-  position: static;
+  position: sticky;
+  top: 1rem;
+  height: fit-content;
+  max-height: calc(100vh - 2rem);
+  overflow-y: auto;
 }
 
 .widget {
@@ -122,5 +129,12 @@
   
   .sidebar {
     order: -1;
+    position: static;
+    max-height: none;
+    overflow-y: visible;
+  }
+  
+  .main-content {
+    padding: 0 1rem;
   }
 }

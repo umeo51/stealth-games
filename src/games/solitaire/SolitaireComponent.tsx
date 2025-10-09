@@ -144,7 +144,6 @@ const SolitaireComponent: React.FC<SolitaireComponentProps> = ({ onGameComplete 
             <div
               key={card.id}
               className={`card-container ${pileType === 'tableau' ? 'stacked' : ''}`}
-              style={pileType === 'tableau' ? { top: `${index * 15}px` } : {}}
               onClick={() => handleCardClick(pile, index)}
               onDoubleClick={() => handleCardDoubleClick(pile, index)}
             >

@@ -60,7 +60,13 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             >
               {user ? (
                 <>
-                  <User size={16} />
+                  <div className="header-avatar">
+                    {profile?.avatar_url ? (
+                      <img src={profile.avatar_url} alt="アバター" />
+                    ) : (
+                      <User size={16} />
+                    )}
+                  </div>
                   <span>{profile?.username || 'ユーザー'}</span>
                 </>
               ) : (

@@ -105,6 +105,12 @@ const SudokuComponent: React.FC<SudokuComponentProps> = ({ onGameComplete }) => 
       if (boxRow === selBoxRow && boxCol === selBoxCol) {
         className += ' highlighted';
       }
+      
+      // 同じ数字をハイライト
+      const selectedValue = grid[selRow][selCol].value;
+      if (selectedValue !== 0 && cell.value === selectedValue) {
+        className += ' same-number';
+      }
     }
     
     return className;

@@ -51,15 +51,17 @@
 }
 
 .tableau-row {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
   gap: 0.5rem;
-  justify-content: space-between;
+  width: 100%;
 }
 
 .tableau-column {
-  flex: 1;
   min-height: 200px;
   position: relative;
+  display: flex;
+  flex-direction: column;
 }
 
 .pile {
@@ -98,6 +100,11 @@
 
 .card-container.stacked {
   position: relative;
+  margin-top: -65px;
+}
+
+.card-container.stacked:first-child {
+  margin-top: 0;
 }
 
 .card {
@@ -225,6 +232,7 @@
   
   .tableau-row {
     gap: 0.25rem;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
   }
   
   .card {
@@ -239,6 +247,14 @@
   
   .card .suit {
     font-size: 0.8rem;
+  }
+  
+  .card-container.stacked {
+    margin-top: -50px;
+  }
+  
+  .card-container.stacked:first-child {
+    margin-top: 0;
   }
 }
 
@@ -264,6 +280,10 @@
   }
   
   .card-container.stacked {
-    top: 15px !important;
+    margin-top: -45px;
+  }
+  
+  .card-container.stacked:first-child {
+    margin-top: 0;
   }
 }

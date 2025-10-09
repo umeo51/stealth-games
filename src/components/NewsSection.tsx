@@ -94,15 +94,28 @@ const NewsSection: React.FC<NewsSectionProps> = ({ onToggleGame, gameVisible }) 
         {news.map((article, index) => (
           <React.Fragment key={article.uuid}>
             <article className="news-item">
-              <h4>{article.title}</h4>
-              <p className="news-summary">{article.snippet}</p>
-              <div className="news-meta">
-                <span className="source">{article.source}</span>
-                <span className="time">{newsService.formatTimeAgo(article.published_at)}</span>
-                <div className="tags">
-                  {article.categories.slice(0, 2).map((category) => (
-                    <span key={category} className="tag">{category}</span>
-                  ))}
+              <div className="news-content">
+                <div className="news-thumbnail">
+                  {article.image_url ? (
+                    <img src={article.image_url} alt={article.title} />
+                  ) : (
+                    <div className="placeholder-image">
+                      <span>📰</span>
+                    </div>
+                  )}
+                </div>
+                <div className="news-text">
+                  <h4>{article.title}</h4>
+                  <p className="news-summary">{article.snippet}</p>
+                  <div className="news-meta">
+                    <span className="source">{article.source}</span>
+                    <span className="time">{newsService.formatTimeAgo(article.published_at)}</span>
+                    <div className="tags">
+                      {article.categories.slice(0, 2).map((category) => (
+                        <span key={category} className="tag">{category}</span>
+                      ))}
+                    </div>
+                  </div>
                 </div>
               </div>
             </article>
