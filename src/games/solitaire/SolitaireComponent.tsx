@@ -35,6 +35,19 @@ const SolitaireComponent: React.FC<SolitaireComponentProps> = ({ onGameComplete 
   const handleCardClick = (pile: any, cardIndex: number) => {
     const card = pile.cards[cardIndex];
     
+    // 修正項目: 空の列への移動を許可
+    if (!card && selectedCard) {
+      // 空の列にカードを移動しようとしている場合
+      const cardCount = selectedCard.pile.cards.length - selectedCard.cardIndex;
+      const success = game.moveCard(selectedCard.pile, pile, selectedCard.cardIndex, cardCount);
+      
+      if (success) {
+        setSelectedCard(null);
+        updateGameState();
+      }
+      return;
+    }
+    
     if (!card || !card.faceUp) return;
     
     if (selectedCard) {
@@ -43,13 +56,17 @@ const SolitaireComponent: React.FC<SolitaireComponentProps> = ({ onGameComplete 
         // 同じカードをクリックした場合、選択解除
         setSelectedCard(null);
       } else {
-        // 異なるカードまたはパイルをクリックした場合、移動を試行
+        // 修正項目: 別のカードを選択した場合、選択状態を更新
+        // まず移動を試行
         const cardCount = selectedCard.pile.cards.length - selectedCard.cardIndex;
         const success = game.moveCard(selectedCard.pile, pile, selectedCard.cardIndex, cardCount);
         
         if (success) {
           setSelectedCard(null);
           updateGameState();
+        } else {
+          // 移動できない場合、新しいカードを選択
+          setSelectedCard({ pile, cardIndex });
         }
       }
     } else {
@@ -108,8 +125,20 @@ const SolitaireComponent: React.FC<SolitaireComponentProps> = ({ onGameComplete 
       >
         {card.faceUp ? (
           <>
-            <span className="rank">{rankSymbols[card.rank]}</span>
-            <span className="suit">{suitSymbols[card.suit]}</span>
+            {/* 修正項目: 左上に数字と記号を表示 */}
+            <div className="card-corner top-left">
+              <div className="rank">{rankSymbols[card.rank]}</div>
+              <div className="suit">{suitSymbols[card.suit]}</div>
+            </div>
+            {/* 中央の大きな記号 */}
+            <div className="card-center">
+              <span className="suit-large">{suitSymbols[card.suit]}</span>
+            </div>
+            {/* 修正項目: 右下に数字と記号を表示（回転） */}
+            <div className="card-corner bottom-right">
+              <div className="rank">{rankSymbols[card.rank]}</div>
+              <div className="suit">{suitSymbols[card.suit]}</div>
+            </div>
           </>
         ) : (
           <span className="card-back">🂠</span>

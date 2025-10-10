@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { RefreshCw } from 'lucide-react';
 import { newsService, NewsArticle } from '../services/newsService';
-import AdManager from './AdManager';
 import './NewsSection.css';
 
 interface NewsSectionProps {
@@ -12,7 +11,6 @@ interface NewsSectionProps {
 const NewsSection: React.FC<NewsSectionProps> = ({ onToggleGame, gameVisible }) => {
   const [news, setNews] = useState<NewsArticle[]>([]);
   const [loading, setLoading] = useState(true);
-  const [refreshing, setRefreshing] = useState(false);
 
   const loadNews = async () => {
     try {
@@ -26,117 +24,79 @@ const NewsSection: React.FC<NewsSectionProps> = ({ onToggleGame, gameVisible }) 
     }
   };
 
-  const refreshNews = async () => {
-    try {
-      setRefreshing(true);
-      const articles = await newsService.fetchNews(5);
-      setNews(articles);
-    } catch (error) {
-      console.error('Failed to refresh news:', error);
-    } finally {
-      setRefreshing(false);
-    }
-  };
-
   useEffect(() => {
     loadNews();
-    
-    // 5分ごとに自動更新
-    const interval = setInterval(loadNews, 5 * 60 * 1000);
-    
-    return () => clearInterval(interval);
   }, []);
-
-  if (loading) {
-    return (
-      <section className="news-section">
-        <div className="section-header">
-          <h2>最新ビジネスニュース</h2>
-          <div className="header-actions">
-            <button className="refresh-btn" disabled>
-              <RefreshCw size={16} />
-            </button>
-            <button 
-              className="stealth-toggle"
-              onClick={onToggleGame}
-              title={gameVisible ? "ゲームを隠す" : "ゲームを表示"}
-            >
-              {gameVisible ? "👁️‍🗨️" : "👁️"}
-            </button>
-          </div>
-        </div>
-        
-        <div className="news-loading">
-          <div className="loading-spinner"></div>
-          <p>ニュースを読み込み中...</p>
-        </div>
-      </section>
-    );
-  }
 
   return (
     <section className="news-section">
       <div className="section-header">
-        <h2>最新ビジネスニュース</h2>
+        <h2>最新ニュース</h2>
         <div className="header-actions">
           <button 
-            className={`refresh-btn ${refreshing ? 'refreshing' : ''}`}
-            onClick={refreshNews}
-            disabled={refreshing}
-            title="ニュースを更新"
+            className="refresh-button"
+            onClick={loadNews}
+            disabled={loading}
           >
-            <RefreshCw size={16} />
+            <RefreshCw size={16} className={loading ? 'spinning' : ''} />
+            更新
+          </button>
+          <button 
+            className="game-toggle-button"
+            onClick={onToggleGame}
+          >
+            {gameVisible ? 'ゲームを隠す' : 'ゲームを表示'}
           </button>
         </div>
       </div>
-      
+
       <div className="news-list">
-        {news.map((article, index) => (
-          <React.Fragment key={article.uuid}>
-            <article className="news-item">
+        {loading ? (
+          <div className="loading">ニュースを読み込み中...</div>
+        ) : (
+          news.map((article) => (
+            <article key={article.uuid} className="news-item">
               <div className="news-content">
-                <div className="news-thumbnail">
-                  {article.image_url ? (
-                    <img src={article.image_url} alt={article.title} />
-                  ) : (
-                    <div className="placeholder-image">
-                      <span>📰</span>
+                {article.image_url && (
+                  <div className="news-thumbnail">
+                    <img 
+                      src={article.image_url} 
+                      alt={article.title}
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        target.style.display = 'none';
+                        const placeholder = target.nextElementSibling as HTMLElement;
+                        if (placeholder) placeholder.style.display = 'flex';
+                      }}
+                    />
+                    <div className="thumbnail-placeholder" style={{ display: 'none' }}>
+                      📰
                     </div>
-                  )}
-                </div>
+                  </div>
+                )}
                 <div className="news-text">
                   <h4>{article.title}</h4>
-                  <p className="news-summary">{article.snippet}</p>
+                  <p className="news-description">{article.description}</p>
                   <div className="news-meta">
-                    <span className="source">{article.source}</span>
-                    <span className="time">{newsService.formatTimeAgo(article.published_at)}</span>
-                    <div className="tags">
-                      {article.categories.slice(0, 2).map((category) => (
-                        <span key={category} className="tag">{category}</span>
-                      ))}
-                    </div>
+                    <span className="news-source">{article.source}</span>
+                    <span className="news-date">
+                      {new Date(article.published_at).toLocaleDateString('ja-JP')}
+                    </span>
+                    {article.categories && (
+                      <div className="news-categories">
+                        {article.categories.map((category) => (
+                          <span key={category} className="category-tag">
+                            {category}
+                          </span>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
             </article>
-            
-            {/* 2記事ごとにコンテンツ内広告を挿入 */}
-            {(index + 1) % 2 === 0 && index < news.length - 1 && (
-              <div className="news-ad-container">
-                <AdManager position="content" size="responsive" />
-              </div>
-            )}
-          </React.Fragment>
-        ))}
-      </div>
-      
-      <div className="news-footer">
-        <p className="last-updated">
-          最終更新: {new Date().toLocaleTimeString('ja-JP', { 
-            hour: '2-digit', 
-            minute: '2-digit' 
-          })}
-        </p>
+          ))
+        )}
       </div>
     </section>
   );

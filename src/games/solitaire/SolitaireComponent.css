@@ -50,11 +50,13 @@
   gap: 0.5rem;
 }
 
+/* 修正項目: ソリティアの7列表示を確実にする */
 .tableau-row {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   gap: 0.5rem;
   width: 100%;
+  min-height: 200px;
 }
 
 .tableau-column {
@@ -98,9 +100,10 @@
   transform: translateY(-2px);
 }
 
+/* 修正項目: カードの重ね間隔を調整し、左上の数字と記号が見えるようにする */
 .card-container.stacked {
   position: relative;
-  margin-top: -65px;
+  margin-top: -60px; /* 間隔を少し広げて左上が見えるようにする */
 }
 
 .card-container.stacked:first-child {
@@ -143,9 +146,47 @@
   border-color: #fbbf24;
 }
 
-.card .rank {
-  font-size: 0.75rem;
-  line-height: 1;
+/* 修正項目: カードの左上と右下に数字と記号を表示 */
+.card-corner {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 0.6rem;
+  line-height: 0.8;
+  font-weight: bold;
+}
+
+.card-corner.top-left {
+  top: 2px;
+  left: 2px;
+}
+
+.card-corner.bottom-right {
+  bottom: 2px;
+  right: 2px;
+  transform: rotate(180deg);
+}
+
+.card-corner .rank {
+  font-size: 0.6rem;
+  line-height: 0.8;
+}
+
+.card-corner .suit {
+  font-size: 0.5rem;
+  line-height: 0.8;
+}
+
+.card-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
+.suit-large {
+  font-size: 1.2rem;
 }
 
 .card .suit {

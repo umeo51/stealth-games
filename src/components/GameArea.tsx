@@ -1,6 +1,4 @@
 import React, { useState } from 'react';
-import { useAuth } from '../contexts/AuthContext';
-import { gameHelpers } from '../lib/supabase';
 import SudokuComponent from '../games/sudoku/SudokuComponent';
 import SolitaireComponent from '../games/solitaire/SolitaireComponent';
 import MinesweeperComponent from '../games/minesweeper/MinesweeperComponent';
@@ -8,163 +6,60 @@ import './GameArea.css';
 
 interface GameAreaProps {
   visible: boolean;
-  onToggleVisibility: () => void;
 }
 
-type GameType = 'sudoku' | 'solitaire' | 'minesweeper' | null;
+type GameType = 'sudoku' | 'solitaire' | 'minesweeper';
 
-const GameArea: React.FC<GameAreaProps> = ({ visible, onToggleVisibility }) => {
+const GameArea: React.FC<GameAreaProps> = ({ visible }) => {
   const [currentGame, setCurrentGame] = useState<GameType>('sudoku');
-  const [gamesCompleted, setGamesCompleted] = useState(0);
-  const { user } = useAuth();
 
-  // ゲーム完了時の処理
-  const handleGameComplete = async (gameType: string, won: boolean, timeOrScore: number, difficulty?: string) => {
-    setGamesCompleted(prev => prev + 1);
-    
-    if (!user) return;
+  if (!visible) {
+    return null;
+  }
 
-    try {
-      // ゲームセッションを保存
-      const gameSession = {
-        user_id: user.id,
-        game_type: gameType as any,
-        difficulty: difficulty || 'normal',
-        game_data: { won, timeOrScore },
-        completed: won,
-        score: gameType === 'solitaire' ? timeOrScore : undefined,
-        time_spent: gameType !== 'solitaire' ? timeOrScore : 0,
-      };
-
-      await gameHelpers.saveGameSession(gameSession);
-      
-      // ユーザー統計を更新
-      await gameHelpers.updateUserStats(user.id, gameType as any, {
-        ...gameSession,
-        id: '',
-        created_at: new Date().toISOString(),
-      });
-    } catch (error) {
-      console.error('Error saving game session:', error);
-    }
+  const handleGameComplete = (gameType: string, won: boolean, timeOrScore: number, difficulty?: string) => {
+    console.log(`Game completed: ${gameType}, won: ${won}, score: ${timeOrScore}`);
   };
 
   const renderGame = () => {
     switch (currentGame) {
       case 'sudoku':
-        return (
-          <SudokuComponent 
-            onGameComplete={(won, time, difficulty) => 
-              handleGameComplete('sudoku', won, time, difficulty)
-            }
-          />
-        );
+        return <SudokuComponent onGameComplete={handleGameComplete} />;
       case 'solitaire':
-        return (
-          <SolitaireComponent 
-            onGameComplete={(won, score, time) => 
-              handleGameComplete('solitaire', won, score)
-            }
-          />
-        );
+        return <SolitaireComponent onGameComplete={handleGameComplete} />;
       case 'minesweeper':
-        return (
-          <MinesweeperComponent 
-            onGameComplete={(won, time) => 
-              handleGameComplete('minesweeper', won, time)
-            }
-          />
-        );
+        return <MinesweeperComponent onGameComplete={handleGameComplete} />;
       default:
-        return (
-          <div className="game-placeholder">
-            <h4>ゲームを選択してください</h4>
-          </div>
-        );
+        return null;
     }
   };
 
-  if (!visible) {
-    return (
-      <div className="game-area hidden">
-        <div className="game-toggle-container">
-          <button 
-            className="stealth-toggle"
-            onClick={onToggleVisibility}
-            title="ゲームを表示"
-          >
-            👁️ ツール表示
-          </button>
-        </div>
-        <div className="analysis-placeholder">
-          <h4>データ分析中...</h4>
-          <div className="loading-bar">
-            <div className="loading-progress"></div>
-          </div>
-          <div className="fake-metrics">
-            <div className="metric">
-              <span className="label">処理済み:</span>
-              <span className="value">1,247 件</span>
-            </div>
-            <div className="metric">
-              <span className="label">進捗:</span>
-              <span className="value">67%</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div className="game-area visible">
-      <div className="game-header">
-        <div className="game-tabs">
-          <button
-            className={`game-tab ${currentGame === 'sudoku' ? 'active' : ''}`}
-            onClick={() => setCurrentGame('sudoku')}
-          >
-            数独
-          </button>
-          <button
-            className={`game-tab ${currentGame === 'solitaire' ? 'active' : ''}`}
-            onClick={() => setCurrentGame('solitaire')}
-          >
-            ソリティア
-          </button>
-          <button
-            className={`game-tab ${currentGame === 'minesweeper' ? 'active' : ''}`}
-            onClick={() => setCurrentGame('minesweeper')}
-          >
-            マインスイーパ
-          </button>
-        </div>
-        
-        <div className="game-controls">
-          <button 
-            className="stealth-toggle hide"
-            onClick={onToggleVisibility}
-            title="ゲームを隠す"
-          >
-            👁️‍🗨️ 隠す
-          </button>
-          {gamesCompleted > 0 && (
-            <div className="stats">
-              <span className="games-completed">完了: {gamesCompleted}</span>
-            </div>
-          )}
-        </div>
-      </div>
-
-      <div className="game-content">
-        {renderGame()}
+    <div className="game-area">
+      <div className="game-selector">
+        <button 
+          className={currentGame === 'sudoku' ? 'active' : ''}
+          onClick={() => setCurrentGame('sudoku')}
+        >
+          数独
+        </button>
+        <button 
+          className={currentGame === 'solitaire' ? 'active' : ''}
+          onClick={() => setCurrentGame('solitaire')}
+        >
+          ソリティア
+        </button>
+        <button 
+          className={currentGame === 'minesweeper' ? 'active' : ''}
+          onClick={() => setCurrentGame('minesweeper')}
+        >
+          マインスイーパー
+        </button>
       </div>
       
-      {!user && (
-        <div className="guest-notice">
-          <p>ゲストとしてプレイ中です。ログインすると進行状況が保存されます。</p>
-        </div>
-      )}
+      <div className="game-container">
+        {renderGame()}
+      </div>
     </div>
   );
 };
