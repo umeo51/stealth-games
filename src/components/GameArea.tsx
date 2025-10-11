@@ -17,18 +17,29 @@ const GameArea: React.FC<GameAreaProps> = ({ visible }) => {
     return null;
   }
 
-  const handleGameComplete = (gameType: string, won: boolean, timeOrScore: number, difficulty?: string) => {
-    console.log(`Game completed: ${gameType}, won: ${won}, score: ${timeOrScore}`);
+  // 数独ゲーム完了ハンドラー
+  const handleSudokuComplete = (won: boolean, time: number, difficulty: string) => {
+    console.log(`Sudoku completed: won: ${won}, time: ${time}, difficulty: ${difficulty}`);
+  };
+
+  // ソリティアゲーム完了ハンドラー
+  const handleSolitaireComplete = (won: boolean, score: number, time: number) => {
+    console.log(`Solitaire completed: won: ${won}, score: ${score}, time: ${time}`);
+  };
+
+  // マインスイーパーゲーム完了ハンドラー
+  const handleMinesweeperComplete = (won: boolean, time: number) => {
+    console.log(`Minesweeper completed: won: ${won}, time: ${time}`);
   };
 
   const renderGame = () => {
     switch (currentGame) {
       case 'sudoku':
-        return <SudokuComponent onGameComplete={handleGameComplete} />;
+        return <SudokuComponent onGameComplete={handleSudokuComplete} />;
       case 'solitaire':
-        return <SolitaireComponent onGameComplete={handleGameComplete} />;
+        return <SolitaireComponent onGameComplete={handleSolitaireComplete} />;
       case 'minesweeper':
-        return <MinesweeperComponent onGameComplete={handleGameComplete} />;
+        return <MinesweeperComponent onGameComplete={handleMinesweeperComplete} />;
       default:
         return null;
     }

@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { Trophy, Medal, Award, Clock, Target } from 'lucide-react';
-import { gameHelpers, UserStats } from '../lib/supabase';
 import './Leaderboard.css';
 
 interface LeaderboardProps {
@@ -8,11 +7,16 @@ interface LeaderboardProps {
   onClose: () => void;
 }
 
-interface LeaderboardEntry extends UserStats {
-  user_profiles: {
-    username: string;
-    avatar_url?: string;
-  };
+interface LeaderboardEntry {
+  id: string;
+  user_id: string;
+  username: string;
+  avatar_url?: string;
+  games_completed: number;
+  total_time: number;
+  best_time?: number;
+  current_streak: number;
+  longest_streak: number;
   rank: number;
 }
 
@@ -35,98 +39,67 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ isOpen, onClose }) => {
     try {
       setLoading(true);
       
-      // 全ゲームまたは特定ゲームのリーダーボードを取得
-      if (gameFilter === 'all') {
-        // 全ゲームの統合リーダーボード（実装簡略化）
-        const sudokuData = await gameHelpers.getLeaderboard('sudoku', 50);
-        const solitaireData = await gameHelpers.getLeaderboard('solitaire', 50);
-        const minesweeperData = await gameHelpers.getLeaderboard('minesweeper', 50);
-        
-        // データを統合して処理（簡略化）
-        const allData = [
-          ...(sudokuData.data || []),
-          ...(solitaireData.data || []),
-          ...(minesweeperData.data || [])
-        ];
-        
-        // ユーザーごとに統計を集約
-        const userStats = new Map<string, any>();
-        allData.forEach(entry => {
-          const userId = entry.user_id;
-          if (!userStats.has(userId)) {
-            userStats.set(userId, {
-              user_id: userId,
-              user_profiles: entry.user_profiles,
-              games_completed: 0,
-              total_time: 0,
-              best_time: null,
-              current_streak: 0,
-              longest_streak: 0
-            });
-          }
-          
-          const stats = userStats.get(userId);
-          stats.games_completed += entry.games_completed;
-          stats.total_time += entry.total_time;
-          stats.current_streak = Math.max(stats.current_streak, entry.current_streak);
-          stats.longest_streak = Math.max(stats.longest_streak, entry.longest_streak);
-          
-          if (entry.best_time && (!stats.best_time || entry.best_time < stats.best_time)) {
-            stats.best_time = entry.best_time;
-          }
-        });
-        
-        const sortedData = Array.from(userStats.values()).sort((a, b) => {
-          switch (sortBy) {
-            case 'best_time':
-              if (!a.best_time) return 1;
-              if (!b.best_time) return -1;
-              return a.best_time - b.best_time;
-            case 'games_completed':
-              return b.games_completed - a.games_completed;
-            case 'current_streak':
-              return b.current_streak - a.current_streak;
-            default:
-              return 0;
-          }
-        });
-        
-        const rankedData = sortedData.map((entry, index) => ({
-          ...entry,
-          rank: index + 1
-        }));
-        
-        setLeaderboardData(rankedData.slice(0, 20));
-      } else {
-        // 特定ゲームのリーダーボード
-        const { data, error } = await gameHelpers.getLeaderboard(gameFilter, 20);
-        
-        if (!error && data) {
-          const sortedData = [...data].sort((a, b) => {
-            switch (sortBy) {
-              case 'best_time':
-                if (!a.best_time) return 1;
-                if (!b.best_time) return -1;
-                return a.best_time - b.best_time;
-              case 'games_completed':
-                return b.games_completed - a.games_completed;
-              case 'current_streak':
-                return b.current_streak - a.current_streak;
-              default:
-                return 0;
-            }
-          });
-          
-          const rankedData = sortedData.map((entry, index) => ({
-            ...entry,
-            rank: index + 1
-          }));
-          
-          setLeaderboardData(rankedData);
+      // モックデータを使用
+      const mockData: LeaderboardEntry[] = [
+        {
+          id: '1',
+          user_id: '1',
+          username: 'プレイヤー1',
+          games_completed: 25,
+          total_time: 1500,
+          best_time: 45,
+          current_streak: 5,
+          longest_streak: 12,
+          rank: 1
+        },
+        {
+          id: '2',
+          user_id: '2',
+          username: 'プレイヤー2',
+          games_completed: 18,
+          total_time: 1200,
+          best_time: 52,
+          current_streak: 3,
+          longest_streak: 8,
+          rank: 2
+        },
+        {
+          id: '3',
+          user_id: '3',
+          username: 'プレイヤー3',
+          games_completed: 30,
+          total_time: 1800,
+          best_time: 38,
+          current_streak: 7,
+          longest_streak: 15,
+          rank: 3
         }
-      }
+      ];
+
+      const sortedData = [...mockData].sort((a, b) => {
+        switch (sortBy) {
+          case 'best_time':
+            if (!a.best_time) return 1;
+            if (!b.best_time) return -1;
+            return a.best_time - b.best_time;
+          case 'games_completed':
+            return b.games_completed - a.games_completed;
+          case 'current_streak':
+            return b.current_streak - a.current_streak;
+          default:
+            return 0;
+        }
+      });
+
+      const rankedData = sortedData.map((entry, index) => ({
+        ...entry,
+        rank: index + 1
+      }));
+
+      setLeaderboardData(rankedData);
     } catch (error) {
       console.error('Error loading leaderboard:', error);
+      setLeaderboardData([]);
     } finally {
       setLoading(false);
     }
@@ -154,15 +127,6 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ isOpen, onClose }) => {
         return <Award className="rank-icon bronze" size={20} />;
       default:
         return <span className="rank-number">{rank}</span>;
-    }
-  };
-
-  const getGameLabel = (gameType: string): string => {
-    switch (gameType) {
-      case 'sudoku': return '数独';
-      case 'solitaire': return 'ソリティア';
-      case 'minesweeper': return 'マインスイーパ';
-      default: return '全ゲーム';
     }
   };
 
@@ -236,7 +200,7 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ isOpen, onClose }) => {
               </div>
               
               {leaderboardData.map((entry) => (
-                <div key={`${entry.user_id}-${entry.game_type || 'all'}`} className="leaderboard-row">
+                <div key={entry.id} className="leaderboard-row">
                   <div className="rank-col">
                     {getRankIcon(entry.rank)}
                   </div>
@@ -244,10 +208,10 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ isOpen, onClose }) => {
                   <div className="name-col">
                     <div className="player-info">
                       <div className="avatar">
-                        {entry.user_profiles?.username?.charAt(0).toUpperCase() || 'U'}
+                        {entry.username.charAt(0).toUpperCase()}
                       </div>
                       <span className="username">
-                        {entry.user_profiles?.username || 'Unknown'}
+                        {entry.username}
                       </span>
                     </div>
                   </div>

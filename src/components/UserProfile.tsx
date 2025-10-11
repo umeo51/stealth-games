@@ -33,7 +33,22 @@ const UserProfile: React.FC<UserProfileProps> = ({ isOpen, onClose }) => {
     
     try {
       setLoading(true);
-      const { data, error } = await gameHelpers.getUserStats(user.id);
+      // モックデータを使用
+      const data = [
+        {
+          id: '1',
+          user_id: 'mock-user',
+          game_type: 'sudoku' as const,
+          games_played: 15,
+          games_completed: 12,
+          total_time: 1800,
+          best_time: 180,
+          current_streak: 3,
+          longest_streak: 8,
+          updated_at: new Date().toISOString()
+        }
+      ];
+      const error = null;
       
       if (!error && data) {
         setStats(data);

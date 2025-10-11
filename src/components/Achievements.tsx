@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { Award, Star, Target, Clock, Zap, Trophy } from 'lucide-react';
-import { useAuth } from '../contexts/AuthContext';
-import { gameHelpers, UserStats } from '../lib/supabase';
 import './Achievements.css';
 
 interface AchievementDefinition {
@@ -10,17 +8,8 @@ interface AchievementDefinition {
   description: string;
   icon: React.ReactNode;
   category: 'games' | 'time' | 'streak' | 'special';
-  requirement: (stats: UserStats[]) => boolean;
   rarity: 'common' | 'rare' | 'epic' | 'legendary';
-}
-
-interface UserAchievement {
-  id: string;
-  name: string;
-  description: string;
-  icon: React.ReactNode;
-  earnedAt: Date;
-  rarity: 'common' | 'rare' | 'epic' | 'legendary';
+  earned: boolean;
 }
 
 interface AchievementsProps {
@@ -29,9 +18,7 @@ interface AchievementsProps {
 }
 
 const Achievements: React.FC<AchievementsProps> = ({ isOpen, onClose }) => {
-  const { user } = useAuth();
-  const [userStats, setUserStats] = useState<UserStats[]>([]);
-  const [earnedAchievements, setEarnedAchievements] = useState<UserAchievement[]>([]);
+  const [achievements, setAchievements] = useState<AchievementDefinition[]>([]);
   const [loading, setLoading] = useState(true);
 
   // 称号の定義
@@ -43,8 +30,8 @@ const Achievements: React.FC<AchievementsProps> = ({ isOpen, onClose }) => {
       description: '初めてゲームをクリアしました',
       icon: <Star size={24} />,
       category: 'games',
-      requirement: (stats) => stats.some(s => s.games_completed >= 1),
-      rarity: 'common'
+      rarity: 'common',
+      earned: true
     },
     {
       id: 'ten_wins',
@@ -52,8 +39,8 @@ const Achievements: React.FC<AchievementsProps> = ({ isOpen, onClose }) => {
       description: '10回ゲームをクリアしました',
       icon: <Target size={24} />,
       category: 'games',
-      requirement: (stats) => stats.reduce((sum, s) => sum + s.games_completed, 0) >= 10,
-      rarity: 'common'
+      rarity: 'common',
+      earned: false
     },
     {
       id: 'fifty_wins',
@@ -61,8 +48,8 @@ const Achievements: React.FC<AchievementsProps> = ({ isOpen, onClose }) => {
       description: '50回ゲームをクリアしました',
       icon: <Award size={24} />,
       category: 'games',
-      requirement: (stats) => stats.reduce((sum, s) => sum + s.games_completed, 0) >= 50,
-      rarity: 'rare'
+      rarity: 'rare',
+      earned: false
     },
     {
       id: 'hundred_wins',
@@ -70,8 +57,8 @@ const Achievements: React.FC<AchievementsProps> = ({ isOpen, onClose }) => {
       description: '100回ゲームをクリアしました',
       icon: <Trophy size={24} />,
       category: 'games',
-      requirement: (stats) => stats.reduce((sum, s) => sum + s.games_completed, 0) >= 100,
-      rarity: 'epic'
+      rarity: 'epic',
+      earned: false
     },
     
     // 連続成功系
@@ -81,8 +68,8 @@ const Achievements: React.FC<AchievementsProps> = ({ isOpen, onClose }) => {
       description: '5連勝を達成しました',
       icon: <Zap size={24} />,
       category: 'streak',
-      requirement: (stats) => stats.some(s => s.longest_streak >= 5),
-      rarity: 'common'
+      rarity: 'common',
+      earned: true
     },
     {
       id: 'streak_10',
@@ -90,8 +77,8 @@ const Achievements: React.FC<AchievementsProps> = ({ isOpen, onClose }) => {
       description: '10連勝を達成しました',
       icon: <Zap size={24} />,
       category: 'streak',
-      requirement: (stats) => stats.some(s => s.longest_streak >= 10),
-      rarity: 'rare'
+      rarity: 'rare',
+      earned: false
     },
     {
       id: 'streak_20',
@@ -99,8 +86,8 @@ const Achievements: React.FC<AchievementsProps> = ({ isOpen, onClose }) => {
       description: '20連勝を達成しました',
       icon: <Zap size={24} />,
       category: 'streak',
-      requirement: (stats) => stats.some(s => s.longest_streak >= 20),
-      rarity: 'epic'
+      rarity: 'epic',
+      earned: false
     },
     
     // 時間系
@@ -110,8 +97,8 @@ const Achievements: React.FC<AchievementsProps> = ({ isOpen, onClose }) => {
       description: '数独を3分以内でクリアしました',
       icon: <Clock size={24} />,
       category: 'time',
-      requirement: (stats) => stats.some(s => s.game_type === 'sudoku' && s.best_time && s.best_time <= 180),
-      rarity: 'rare'
+      rarity: 'rare',
+      earned: false
     },
     {
       id: 'speed_minesweeper',
@@ -119,8 +106,8 @@ const Achievements: React.FC<AchievementsProps> = ({ isOpen, onClose }) => {
       description: 'マインスイーパ初級を30秒以内でクリアしました',
       icon: <Clock size={24} />,
       category: 'time',
-      requirement: (stats) => stats.some(s => s.game_type === 'minesweeper' && s.best_time && s.best_time <= 30),
-      rarity: 'epic'
+      rarity: 'epic',
+      earned: false
     },
     
     // 特別系
@@ -130,11 +117,8 @@ const Achievements: React.FC<AchievementsProps> = ({ isOpen, onClose }) => {
       description: '全てのゲームをクリアしました',
       icon: <Award size={24} />,
       category: 'special',
-      requirement: (stats) => {
-        const gameTypes = ['sudoku', 'solitaire', 'minesweeper'];
-        return gameTypes.every(type => stats.some(s => s.game_type === type && s.games_completed >= 1));
-      },
-      rarity: 'rare'
+      rarity: 'rare',
+      earned: false
     },
     {
       id: 'dedication',
@@ -142,8 +126,8 @@ const Achievements: React.FC<AchievementsProps> = ({ isOpen, onClose }) => {
       description: '総プレイ時間が10時間を超えました',
       icon: <Clock size={24} />,
       category: 'time',
-      requirement: (stats) => stats.reduce((sum, s) => sum + s.total_time, 0) >= 36000, // 10時間
-      rarity: 'epic'
+      rarity: 'epic',
+      earned: false
     },
     {
       id: 'perfectionist',
@@ -151,51 +135,22 @@ const Achievements: React.FC<AchievementsProps> = ({ isOpen, onClose }) => {
       description: '完了率100%を達成しました（10ゲーム以上プレイ）',
       icon: <Star size={24} />,
       category: 'special',
-      requirement: (stats) => {
-        const totalPlayed = stats.reduce((sum, s) => sum + s.games_played, 0);
-        const totalCompleted = stats.reduce((sum, s) => sum + s.games_completed, 0);
-        return totalPlayed >= 10 && totalPlayed === totalCompleted;
-      },
-      rarity: 'legendary'
+      rarity: 'legendary',
+      earned: false
     }
   ];
 
   useEffect(() => {
-    if (isOpen && user) {
+    if (isOpen) {
       loadUserAchievements();
     }
-  }, [isOpen, user]);
+  }, [isOpen]);
 
   const loadUserAchievements = async () => {
-    if (!user) return;
-    
     try {
       setLoading(true);
-      
-      // ユーザーの統計を取得
-      const { data: stats, error } = await gameHelpers.getUserStats(user.id);
-      
-      if (!error && stats) {
-        setUserStats(stats);
-        
-        // 達成した称号を計算
-        const earned: UserAchievement[] = [];
-        
-        achievementDefinitions.forEach(achievement => {
-          if (achievement.requirement(stats)) {
-            earned.push({
-              id: achievement.id,
-              name: achievement.name,
-              description: achievement.description,
-              icon: achievement.icon,
-              earnedAt: new Date(), // 実際の実装では達成日時を保存
-              rarity: achievement.rarity
-            });
-          }
-        });
-        
-        setEarnedAchievements(earned);
-      }
+      // モックデータを使用
+      setAchievements(achievementDefinitions);
     } catch (error) {
       console.error('Error loading achievements:', error);
     } finally {
@@ -224,8 +179,8 @@ const Achievements: React.FC<AchievementsProps> = ({ isOpen, onClose }) => {
   };
 
   const getProgressStats = () => {
-    const totalAchievements = achievementDefinitions.length;
-    const earnedCount = earnedAchievements.length;
+    const totalAchievements = achievements.length;
+    const earnedCount = achievements.filter(a => a.earned).length;
     const progress = totalAchievements > 0 ? (earnedCount / totalAchievements) * 100 : 0;
     
     return { totalAchievements, earnedCount, progress };
@@ -273,54 +228,44 @@ const Achievements: React.FC<AchievementsProps> = ({ isOpen, onClose }) => {
             </div>
           ) : (
             <div className="achievements-grid">
-              {achievementDefinitions.map(achievement => {
-                const isEarned = earnedAchievements.some(e => e.id === achievement.id);
-                
-                return (
-                  <div 
-                    key={achievement.id} 
-                    className={`achievement-card ${isEarned ? 'earned' : 'locked'} ${achievement.rarity}`}
-                  >
-                    <div className="achievement-icon" style={{ color: getRarityColor(achievement.rarity) }}>
-                      {achievement.icon}
-                    </div>
-                    
-                    <div className="achievement-info">
-                      <h4 className="achievement-name">
-                        {achievement.name}
-                      </h4>
-                      <p className="achievement-description">
-                        {achievement.description}
-                      </p>
-                      <div className="achievement-meta">
-                        <span 
-                          className="rarity-badge"
-                          style={{ 
-                            backgroundColor: getRarityColor(achievement.rarity),
-                            color: 'white'
-                          }}
-                        >
-                          {getRarityLabel(achievement.rarity)}
+              {achievements.map(achievement => (
+                <div 
+                  key={achievement.id} 
+                  className={`achievement-card ${achievement.earned ? 'earned' : 'locked'} ${achievement.rarity}`}
+                >
+                  <div className="achievement-icon" style={{ color: getRarityColor(achievement.rarity) }}>
+                    {achievement.icon}
+                  </div>
+                  
+                  <div className="achievement-info">
+                    <h4 className="achievement-name">
+                      {achievement.name}
+                    </h4>
+                    <p className="achievement-description">
+                      {achievement.description}
+                    </p>
+                    <div className="achievement-meta">
+                      <span 
+                        className="rarity-badge"
+                        style={{ 
+                          backgroundColor: getRarityColor(achievement.rarity),
+                          color: 'white'
+                        }}
+                      >
+                        {getRarityLabel(achievement.rarity)}
+                      </span>
+                      {achievement.earned && (
+                        <span className="earned-badge">
+                          ✓ 達成済み
                         </span>
-                        {isEarned && (
-                          <span className="earned-badge">
-                            ✓ 達成済み
-                          </span>
-                        )}
-                      </div>
+                      )}
                     </div>
                   </div>
-                );
-              })}
+                </div>
+              ))}
             </div>
           )}
         </div>
-
-        {!user && (
-          <div className="login-prompt">
-            <p>ログインして称号を獲得しましょう！</p>
-          </div>
-        )}
       </div>
     </div>
   );

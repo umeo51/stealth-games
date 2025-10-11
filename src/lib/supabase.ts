@@ -84,7 +84,9 @@ export const profileHelpers = {
 export const gameHelpers = {
   createGameSession: (session: any) => Promise.resolve({ data: session, error: null }),
   updateGameSession: (id: string, updates: any) => Promise.resolve({ data: null, error: null }),
-  getUserGameSessions: (userId: string, gameType?: string) => Promise.resolve({ data: [], error: null })
+  getUserGameSessions: (userId: string, gameType?: string) => Promise.resolve({ data: [], error: null }),
+  getUserStats: (userId: string) => Promise.resolve({ data: [], error: null }),
+  getLeaderboard: (gameType: string, limit: number = 10) => Promise.resolve({ data: [], error: null })
 };
 
 // 統計ヘルパー関数
