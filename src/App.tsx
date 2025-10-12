@@ -15,7 +15,7 @@ interface NewsArticle {
   published_at: string;
 }
 
-// モックニュースデータ
+// モックニュースデータ（修正項目：サムネイル画像付き）
 const mockNews: NewsArticle[] = [
   {
     id: 1,
@@ -79,211 +79,286 @@ function App() {
     <div className="App">
       {/* ヘッダー */}
       <header style={{ 
-        background: '#2c3e50', 
+        backgroundColor: '#2c3e50', 
         color: 'white', 
-        padding: '1rem',
+        padding: '1rem 2rem',
         display: 'flex',
         justifyContent: 'space-between',
-        alignItems: 'center',
-        position: 'sticky',
-        top: 0,
-        zIndex: 1000
+        alignItems: 'center'
       }}>
-        <h1>Business Research Portal</h1>
-        <nav style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-          <button style={{ margin: '0 0.5rem', padding: '0.5rem 1rem' }}>ニュース</button>
+        <h1 style={{ margin: 0, fontSize: '1.5rem' }}>Business Research Portal</h1>
+        <div style={{ display: 'flex', gap: '1rem' }}>
+          <button style={{ 
+            backgroundColor: '#e8f5e8', 
+            color: '#2d5016', 
+            border: 'none', 
+            padding: '0.5rem 1rem', 
+            borderRadius: '4px',
+            cursor: 'pointer'
+          }}>
+            ニュース
+          </button>
           <button 
-            style={{ margin: '0 0.5rem', padding: '0.5rem 1rem' }}
             onClick={() => setGameVisible(!gameVisible)}
+            style={{ 
+              backgroundColor: gameVisible ? '#ffebcd' : '#e6f3ff', 
+              color: gameVisible ? '#8b4513' : '#1e3a8a', 
+              border: 'none', 
+              padding: '0.5rem 1rem', 
+              borderRadius: '4px',
+              cursor: 'pointer'
+            }}
           >
             {gameVisible ? 'ゲームを隠す' : 'ゲームを表示'}
           </button>
-          <button style={{ margin: '0 0.5rem', padding: '0.5rem 1rem' }}>ランキング</button>
-          {/* 修正項目: 初期アバターが表示されていない問題を解決 */}
           <button style={{ 
-            display: 'flex', 
-            alignItems: 'center', 
-            gap: '0.5rem',
-            padding: '0.5rem 1rem',
-            background: '#34495e',
-            border: 'none',
-            color: 'white',
-            borderRadius: '4px'
+            backgroundColor: '#fff4e6', 
+            color: '#cc7a00', 
+            border: 'none', 
+            padding: '0.5rem 1rem', 
+            borderRadius: '4px',
+            cursor: 'pointer'
+          }}>
+            ランキング
+          </button>
+          {/* 修正項目：初期アバター表示 */}
+          <button style={{ 
+            backgroundColor: '#f0f0f0', 
+            color: '#333', 
+            border: 'none', 
+            padding: '0.5rem 1rem', 
+            borderRadius: '4px',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.5rem'
           }}>
             <User size={20} />
             <span>ゲスト</span>
           </button>
-        </nav>
+        </div>
       </header>
 
-      {/* ヘッダー広告 */}
+      {/* ヘッダー広告エリア（修正項目：追従しない固定表示） */}
       <div style={{ 
-        background: '#e9ecef',
-        padding: '1rem',
+        backgroundColor: '#f5f5f5', 
+        padding: '1rem', 
         textAlign: 'center',
-        borderBottom: '1px solid #dee2e6'
+        borderBottom: '1px solid #ddd'
       }}>
-        <p>ヘッダー広告エリア</p>
+        ヘッダー広告エリア
       </div>
 
-      {/* メインコンテンツ - 修正項目: 画面幅を最大活用、ニュースと広告が別スクロールをやめる */}
-      <main style={{ 
+      {/* メインコンテンツ（修正項目：ニュースと広告が同じスクロール、画面幅最大活用） */}
+      <div style={{ 
         display: 'flex', 
         minHeight: 'calc(100vh - 200px)',
         gap: '1rem',
-        padding: '1rem',
-        maxWidth: '100%'
+        padding: '1rem'
       }}>
-        {/* ニュースセクション - 修正項目: 右サイドの広告、ゲームの表示幅を1.5倍程度にする */}
-        <section style={{ 
-          flex: gameVisible ? '3' : '4', // ゲーム表示時は幅を調整
-          background: '#f8f9fa',
-          padding: '1rem',
+        {/* ニュースセクション */}
+        <div style={{ 
+          flex: '3',
+          backgroundColor: 'white',
           borderRadius: '8px',
-          overflow: 'auto' // 修正項目: 別スクロールをやめる
+          padding: '1.5rem',
+          boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
         }}>
-          <h2>最新ニュース</h2>
-          <div>
+          <h2 style={{ 
+            marginTop: 0, 
+            marginBottom: '1.5rem',
+            color: '#2c3e50',
+            fontSize: '1.5rem'
+          }}>
+            最新ニュース
+          </h2>
+          
+          {/* 修正項目：ニュースにサムネイル表示追加 */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
             {mockNews.map((article) => (
-              <article key={article.id} style={{ 
-                marginBottom: '1rem',
+              <div key={article.id} style={{ 
+                display: 'flex', 
+                gap: '1rem',
                 padding: '1rem',
-                background: 'white',
+                border: '1px solid #e9ecef',
                 borderRadius: '8px',
-                display: 'flex',
-                gap: '1rem'
+                backgroundColor: '#fafafa'
               }}>
+                {/* サムネイル画像 */}
                 {article.image_url && (
-                  <img 
-                    src={article.image_url} 
-                    alt={article.title}
-                    style={{ width: '150px', height: '100px', objectFit: 'cover', borderRadius: '4px' }}
-                  />
+                  <div style={{ flexShrink: 0 }}>
+                    <img 
+                      src={article.image_url} 
+                      alt={article.title}
+                      style={{ 
+                        width: '150px', 
+                        height: '100px', 
+                        objectFit: 'cover',
+                        borderRadius: '4px'
+                      }}
+                    />
+                  </div>
                 )}
-                <div>
-                  <h4 style={{ margin: '0 0 0.5rem 0' }}>{article.title}</h4>
-                  <p style={{ margin: '0 0 0.5rem 0', color: '#666' }}>{article.description}</p>
-                  <div style={{ fontSize: '0.8rem', color: '#999' }}>
-                    <span>{article.source}</span> • <span>{article.published_at}</span>
+                
+                {/* 記事内容 */}
+                <div style={{ flex: 1 }}>
+                  <h3 style={{ 
+                    margin: '0 0 0.5rem 0',
+                    fontSize: '1.1rem',
+                    color: '#2c3e50'
+                  }}>
+                    {article.title}
+                  </h3>
+                  <p style={{ 
+                    margin: '0 0 0.5rem 0',
+                    color: '#555',
+                    lineHeight: '1.5'
+                  }}>
+                    {article.description}
+                  </p>
+                  <div style={{ 
+                    fontSize: '0.875rem',
+                    color: '#6c757d'
+                  }}>
+                    {article.source} • {article.published_at}
                   </div>
                 </div>
-              </article>
+              </div>
             ))}
           </div>
-        </section>
+        </div>
 
-        {/* ゲームエリア - 修正項目: 表示幅を1.5倍程度にする */}
+        {/* ゲームエリア（修正項目：表示幅を1.5倍程度） */}
         {gameVisible && (
-          <aside style={{ 
-            flex: '2', // 1.5倍程度の幅
-            background: '#f8f9fa',
-            padding: '1rem',
-            borderRadius: '8px'
+          <div style={{ 
+            flex: '2',
+            backgroundColor: 'white',
+            borderRadius: '8px',
+            padding: '1.5rem',
+            boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
           }}>
-            <h3>ゲームエリア</h3>
-            <div style={{ marginBottom: '1rem' }}>
-              <button 
-                style={{ 
-                  margin: '0 0.5rem 0.5rem 0', 
-                  padding: '0.5rem 1rem',
-                  background: currentGame === 'sudoku' ? '#007bff' : '#6c757d',
+            <h2 style={{ 
+              marginTop: 0, 
+              marginBottom: '1rem',
+              color: '#2c3e50'
+            }}>
+              ゲームエリア
+            </h2>
+            
+            {/* ゲーム選択ボタン */}
+            <div style={{ 
+              display: 'flex', 
+              gap: '0.5rem', 
+              marginBottom: '1rem',
+              flexWrap: 'wrap'
+            }}>
+              <button
+                onClick={() => setCurrentGame('sudoku')}
+                style={{
+                  backgroundColor: currentGame === 'sudoku' ? '#007bff' : '#6c757d',
                   color: 'white',
                   border: 'none',
-                  borderRadius: '4px'
+                  padding: '0.5rem 1rem',
+                  borderRadius: '4px',
+                  cursor: 'pointer',
+                  fontSize: '0.875rem'
                 }}
-                onClick={() => setCurrentGame('sudoku')}
               >
                 数独
               </button>
-              <button 
-                style={{ 
-                  margin: '0 0.5rem 0.5rem 0', 
-                  padding: '0.5rem 1rem',
-                  background: currentGame === 'solitaire' ? '#007bff' : '#6c757d',
+              <button
+                onClick={() => setCurrentGame('solitaire')}
+                style={{
+                  backgroundColor: currentGame === 'solitaire' ? '#007bff' : '#6c757d',
                   color: 'white',
                   border: 'none',
-                  borderRadius: '4px'
+                  padding: '0.5rem 1rem',
+                  borderRadius: '4px',
+                  cursor: 'pointer',
+                  fontSize: '0.875rem'
                 }}
-                onClick={() => setCurrentGame('solitaire')}
               >
                 ソリティア
               </button>
-              <button 
-                style={{ 
-                  margin: '0 0.5rem 0.5rem 0', 
-                  padding: '0.5rem 1rem',
-                  background: currentGame === 'minesweeper' ? '#007bff' : '#6c757d',
+              <button
+                onClick={() => setCurrentGame('minesweeper')}
+                style={{
+                  backgroundColor: currentGame === 'minesweeper' ? '#007bff' : '#6c757d',
                   color: 'white',
                   border: 'none',
-                  borderRadius: '4px'
+                  padding: '0.5rem 1rem',
+                  borderRadius: '4px',
+                  cursor: 'pointer',
+                  fontSize: '0.875rem'
                 }}
-                onClick={() => setCurrentGame('minesweeper')}
               >
                 マインスイーパー
               </button>
             </div>
-            
+
+            {/* ゲームコンポーネント */}
             <div style={{ 
-              background: 'white',
-              padding: '1rem',
+              border: '1px solid #dee2e6',
               borderRadius: '8px',
-              minHeight: '400px'
+              padding: '1rem',
+              backgroundColor: '#f8f9fa'
             }}>
               {renderGame()}
             </div>
-          </aside>
+          </div>
         )}
 
-        {/* 右サイドバー広告エリア - 修正項目: 右上の広告が追従する問題を修正 */}
-        <aside style={{ 
+        {/* サイドバー広告（修正項目：固定表示、追従しない） */}
+        <div style={{ 
           width: '300px',
-          background: '#f8f9fa',
-          padding: '1rem',
-          borderRadius: '8px'
+          flexShrink: 0
         }}>
-          {/* 修正項目: 追従しない固定広告 */}
           <div style={{ 
-            background: '#e9ecef',
-            padding: '2rem',
-            textAlign: 'center',
+            backgroundColor: '#f8f9fa',
+            border: '1px solid #dee2e6',
             borderRadius: '8px',
+            padding: '1rem',
             marginBottom: '1rem',
-            position: 'static' // 追従をやめる
+            textAlign: 'center'
           }}>
-            <p>サイドバー広告</p>
+            <h4 style={{ margin: '0 0 0.5rem 0', color: '#6c757d' }}>サイドバー広告</h4>
+            <div style={{ 
+              height: '200px',
+              backgroundColor: '#e9ecef',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: '#6c757d',
+              borderRadius: '4px'
+            }}>
+              広告スペース
+            </div>
           </div>
+
           <div style={{ 
-            background: '#e9ecef',
-            padding: '2rem',
-            textAlign: 'center',
-            borderRadius: '8px'
+            backgroundColor: '#f8f9fa',
+            border: '1px solid #dee2e6',
+            borderRadius: '8px',
+            padding: '1rem',
+            textAlign: 'center'
           }}>
-            <p>追加広告</p>
+            <h4 style={{ margin: '0 0 0.5rem 0', color: '#6c757d' }}>追加広告</h4>
+            <div style={{ 
+              height: '150px',
+              backgroundColor: '#e9ecef',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: '#6c757d',
+              borderRadius: '4px'
+            }}>
+              追加広告スペース
+            </div>
           </div>
-        </aside>
-      </main>
-
-      {/* フッター広告 */}
-      <div style={{ 
-        background: '#e9ecef',
-        padding: '1rem',
-        textAlign: 'center',
-        borderTop: '1px solid #dee2e6'
-      }}>
-        <p>フッター広告エリア</p>
+        </div>
       </div>
-
-      {/* フッター */}
-      <footer style={{ 
-        background: '#2c3e50', 
-        color: 'white', 
-        padding: '1rem',
-        textAlign: 'center'
-      }}>
-        <p>&copy; 2025 Business Research Portal. All rights reserved.</p>
-      </footer>
     </div>
-  )
+  );
 }
 
-export default App
+export default App;

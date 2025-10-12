@@ -152,30 +152,33 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  font-size: 0.6rem;
-  line-height: 0.8;
+  font-size: 0.75rem;
+  line-height: 1;
   font-weight: bold;
+  z-index: 10;
 }
 
 .card-corner.top-left {
-  top: 2px;
-  left: 2px;
+  top: 3px;
+  left: 3px;
 }
 
 .card-corner.bottom-right {
-  bottom: 2px;
-  right: 2px;
+  bottom: 3px;
+  right: 3px;
   transform: rotate(180deg);
 }
 
 .card-corner .rank {
-  font-size: 0.6rem;
-  line-height: 0.8;
+  font-size: 0.75rem;
+  line-height: 0.9;
+  margin: 0;
 }
 
 .card-corner .suit {
-  font-size: 0.5rem;
-  line-height: 0.8;
+  font-size: 0.6rem;
+  line-height: 0.9;
+  margin: 0;
 }
 
 .card-center {
@@ -183,10 +186,11 @@
   align-items: center;
   justify-content: center;
   height: 100%;
+  opacity: 0.3; /* 中央の記号を薄くして左上右下を目立たせる */
 }
 
 .suit-large {
-  font-size: 1.2rem;
+  font-size: 0.8rem; /* 中央の記号を小さくする */
 }
 
 .card .suit {
