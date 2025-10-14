@@ -50,39 +50,31 @@
   gap: 0.5rem;
 }
 
-/* 修正項目: ソリティアの7列表示を確実にする */
-.tableau-row {
+.tableau {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   gap: 0.5rem;
-  width: 100%;
-  min-height: 200px;
-}
-
-.tableau-column {
-  min-height: 200px;
-  position: relative;
-  display: flex;
-  flex-direction: column;
+  min-height: 300px;
 }
 
 .pile {
-  position: relative;
-  min-height: 80px;
+  min-height: 100px;
   min-width: 60px;
+  position: relative;
+  cursor: pointer;
 }
 
 .pile.empty {
   border: 2px dashed rgba(255,255,255,0.3);
-  border-radius: 8px;
+  border-radius: 6px;
   display: flex;
   align-items: center;
   justify-content: center;
-  cursor: pointer;
 }
 
 .pile.empty:hover {
   border-color: rgba(255,255,255,0.5);
+  background: rgba(255,255,255,0.1);
 }
 
 .empty-slot {
@@ -91,13 +83,17 @@
 }
 
 .card-container {
-  position: absolute;
-  cursor: pointer;
+  position: relative;
   transition: transform 0.2s ease;
 }
 
 .card-container:hover {
   transform: translateY(-2px);
+}
+
+.card-container.dragging {
+  z-index: 1000;
+  transform: rotate(5deg);
 }
 
 /* 修正項目: カードの重ね間隔を調整し、左上の数字と記号が見えるようにする */
@@ -152,33 +148,38 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  font-size: 0.75rem;
+  font-size: 0.8rem;
   line-height: 1;
   font-weight: bold;
-  z-index: 10;
+  z-index: 100;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 2px;
+  padding: 1px 2px;
 }
 
 .card-corner.top-left {
-  top: 3px;
-  left: 3px;
+  top: 2px;
+  left: 2px;
 }
 
 .card-corner.bottom-right {
-  bottom: 3px;
-  right: 3px;
+  bottom: 2px;
+  right: 2px;
   transform: rotate(180deg);
 }
 
 .card-corner .rank {
-  font-size: 0.75rem;
-  line-height: 0.9;
+  font-size: 0.8rem;
+  line-height: 0.8;
   margin: 0;
+  font-weight: bold;
 }
 
 .card-corner .suit {
-  font-size: 0.6rem;
-  line-height: 0.9;
+  font-size: 0.7rem;
+  line-height: 0.8;
   margin: 0;
+  font-weight: bold;
 }
 
 .card-center {
@@ -186,11 +187,11 @@
   align-items: center;
   justify-content: center;
   height: 100%;
-  opacity: 0.3; /* 中央の記号を薄くして左上右下を目立たせる */
+  opacity: 0.2; /* 中央の記号を薄くして左上右下を目立たせる */
 }
 
 .suit-large {
-  font-size: 0.8rem; /* 中央の記号を小さくする */
+  font-size: 0.6rem; /* 中央の記号を小さくする */
 }
 
 .card .suit {
@@ -202,55 +203,58 @@
   font-size: 2rem;
 }
 
-.stock {
-  cursor: pointer;
-  transition: transform 0.2s ease;
-}
-
-.stock:hover {
-  transform: scale(1.05);
-}
-
-.solitaire-controls {
+.game-controls {
   display: flex;
-  gap: 0.5rem;
+  gap: 1rem;
   justify-content: center;
-  flex-wrap: wrap;
-}
-
-.solitaire-controls button {
-  padding: 0.5rem 1rem;
-  border: 1px solid rgba(255,255,255,0.3);
-  border-radius: 4px;
-  background: rgba(255,255,255,0.1);
-  color: white;
-  font-size: 0.875rem;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.solitaire-controls button:hover {
-  background: rgba(255,255,255,0.2);
-  border-color: rgba(255,255,255,0.5);
-}
-
-.game-result {
-  background: rgba(255,255,255,0.1);
-  border: 1px solid rgba(255,255,255,0.2);
-  border-radius: 6px;
-  padding: 1rem;
-  text-align: center;
   margin-top: 1rem;
 }
 
-.game-result h4 {
-  margin: 0 0 0.5rem 0;
-  color: #fbbf24;
+.control-button {
+  background: #28a745;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.875rem;
+  transition: background-color 0.2s ease;
 }
 
-.game-result p {
-  margin: 0.25rem 0;
-  color: rgba(255,255,255,0.9);
+.control-button:hover {
+  background: #218838;
+}
+
+.control-button:disabled {
+  background: #6c757d;
+  cursor: not-allowed;
+}
+
+.hint-button {
+  background: #17a2b8;
+}
+
+.hint-button:hover {
+  background: #138496;
+}
+
+.game-status {
+  text-align: center;
+  margin-top: 1rem;
+  padding: 1rem;
+  background: rgba(255,255,255,0.1);
+  border-radius: 4px;
+}
+
+.win-message {
+  color: #28a745;
+  font-weight: bold;
+  font-size: 1.1rem;
+}
+
+.move-counter {
+  color: rgba(255,255,255,0.8);
+  font-size: 0.875rem;
 }
 
 /* レスポンシブ対応 */
@@ -259,25 +263,8 @@
     padding: 0.5rem;
   }
   
-  .game-info {
-    flex-direction: column;
+  .tableau {
     gap: 0.25rem;
-    text-align: right;
-  }
-  
-  .top-row {
-    flex-direction: column;
-    gap: 1rem;
-    align-items: center;
-  }
-  
-  .foundations {
-    gap: 0.25rem;
-  }
-  
-  .tableau-row {
-    gap: 0.25rem;
-    grid-template-columns: repeat(7, minmax(0, 1fr));
   }
   
   .card {
@@ -286,49 +273,73 @@
     font-size: 0.75rem;
   }
   
-  .card .rank {
+  .card-corner {
+    font-size: 0.6rem;
+    padding: 0.5px 1px;
+  }
+  
+  .card-corner .rank {
     font-size: 0.6rem;
   }
   
-  .card .suit {
-    font-size: 0.8rem;
-  }
-  
-  .card-container.stacked {
-    margin-top: -50px;
-  }
-  
-  .card-container.stacked:first-child {
-    margin-top: 0;
-  }
-}
-
-@media (max-width: 480px) {
-  .solitaire-header {
-    flex-direction: column;
-    gap: 0.5rem;
-    text-align: center;
-  }
-  
-  .card {
-    width: 35px;
-    height: 50px;
-    font-size: 0.6rem;
-  }
-  
-  .card .rank {
+  .card-corner .suit {
     font-size: 0.5rem;
   }
   
-  .card .suit {
-    font-size: 0.7rem;
+  .suit-large {
+    font-size: 0.5rem;
   }
   
+  /* カードの重ね間隔を小画面用に調整 */
   .card-container.stacked {
     margin-top: -45px;
   }
-  
-  .card-container.stacked:first-child {
-    margin-top: 0;
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .card {
+    width: 55px;
+    height: 75px;
   }
+  
+  .card-corner {
+    font-size: 0.7rem;
+  }
+  
+  .card-corner .rank {
+    font-size: 0.7rem;
+  }
+  
+  .card-corner .suit {
+    font-size: 0.6rem;
+  }
+  
+  .suit-large {
+    font-size: 0.55rem;
+  }
+  
+  /* カードの重ね間隔を中画面用に調整 */
+  .card-container.stacked {
+    margin-top: -55px;
+  }
+}
+
+/* アニメーション */
+@keyframes cardFlip {
+  0% { transform: rotateY(0deg); }
+  50% { transform: rotateY(90deg); }
+  100% { transform: rotateY(0deg); }
+}
+
+.card.flipping {
+  animation: cardFlip 0.6s ease-in-out;
+}
+
+@keyframes cardMove {
+  0% { transform: translate(0, 0); }
+  100% { transform: translate(var(--move-x, 0), var(--move-y, 0)); }
+}
+
+.card.moving {
+  animation: cardMove 0.3s ease-out;
 }
