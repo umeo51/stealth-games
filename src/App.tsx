@@ -15,13 +15,13 @@ interface NewsArticle {
   published_at: string;
 }
 
-// モックニュースデータ（修正項目：サムネイル画像付き）
+// モックニュースデータ（修正項目：実際に動作するサムネイル画像付き）
 const mockNews: NewsArticle[] = [
   {
     id: 1,
     title: "最新技術トレンドについて",
     description: "今年注目すべき技術トレンドをまとめました。AI、クラウド、セキュリティなど幅広い分野での進歩が期待されています。",
-    image_url: "https://via.placeholder.com/150x100/4A90E2/FFFFFF?text=Tech",
+    image_url: "https://picsum.photos/150/100?random=1",
     source: "Tech News",
     published_at: "2025-10-10"
   },
@@ -29,7 +29,7 @@ const mockNews: NewsArticle[] = [
     id: 2,
     title: "ビジネス戦略の新しいアプローチ",
     description: "デジタル変革時代における効果的なビジネス戦略について専門家が解説します。",
-    image_url: "https://via.placeholder.com/150x100/50C878/FFFFFF?text=Business",
+    image_url: "https://picsum.photos/150/100?random=2",
     source: "Business Today",
     published_at: "2025-10-10"
   },
@@ -37,7 +37,7 @@ const mockNews: NewsArticle[] = [
     id: 3,
     title: "市場分析レポート2025",
     description: "2025年の市場動向と投資機会について詳細な分析を提供します。",
-    image_url: "https://via.placeholder.com/150x100/FF6B6B/FFFFFF?text=Market",
+    image_url: "https://picsum.photos/150/100?random=3",
     source: "Market Watch",
     published_at: "2025-10-10"
   }
@@ -196,6 +196,11 @@ function App() {
                         objectFit: 'cover',
                         borderRadius: '4px'
                       }}
+                      onError={(e) => {
+                        // 画像読み込みエラー時のフォールバック
+                        const target = e.target as HTMLImageElement;
+                        target.style.display = 'none';
+                      }}
                     />
                   </div>
                 )}
@@ -301,7 +306,8 @@ function App() {
               border: '1px solid #dee2e6',
               borderRadius: '8px',
               padding: '1rem',
-              backgroundColor: '#f8f9fa'
+              backgroundColor: '#f8f9fa',
+              overflow: 'auto'
             }}>
               {renderGame()}
             </div>
