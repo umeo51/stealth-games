@@ -44,7 +44,7 @@
   font-weight: 600;
 }
 
-/* 修正項目: 数独のマスレイアウト崩れを修正 */
+/* 修正: 数独のグリッドレイアウトを9x9で正しく表示 */
 .sudoku-grid {
   display: grid;
   grid-template-columns: repeat(9, 1fr);
@@ -61,6 +61,24 @@
   margin-right: auto;
 }
 
+/* 3x3ボックスの境界線を強調するための特別なスタイル */
+.sudoku-cell:nth-child(3n):not(:nth-child(9n)) {
+  border-right: 2px solid #333;
+}
+
+.sudoku-cell:nth-child(6n):not(:nth-child(9n)) {
+  border-right: 2px solid #333;
+}
+
+/* 横の境界線（3行目と6行目の後） */
+.sudoku-cell:nth-child(n+19):nth-child(-n+27) {
+  border-bottom: 2px solid #333;
+}
+
+.sudoku-cell:nth-child(n+46):nth-child(-n+54) {
+  border-bottom: 2px solid #333;
+}
+
 .sudoku-cell {
   background: white;
   border: none;
@@ -73,6 +91,7 @@
   transition: all 0.2s ease;
   aspect-ratio: 1;
   min-height: 35px;
+  position: relative;
 }
 
 .sudoku-cell:hover {
@@ -82,98 +101,152 @@
 .sudoku-cell.selected {
   background-color: #2196f3 !important;
   color: white;
+  box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.3);
 }
 
-.sudoku-cell.given {
+.sudoku-cell.fixed {
   background-color: #f5f5f5;
   color: #333;
   font-weight: 900;
   cursor: default;
 }
 
-.sudoku-cell.given:hover {
+.sudoku-cell.fixed:hover {
   background-color: #f5f5f5;
 }
 
-.sudoku-cell.error {
+.sudoku-cell.invalid {
   background-color: #ffebee;
   color: #d32f2f;
 }
 
+.sudoku-cell.highlighted {
+  background-color: #e3f2fd;
+}
+
 .sudoku-cell.same-number {
-  background-color: #fff3e0;
-  color: #f57c00;
+  background-color: #fff3e0 !important;
+  color: #f57c00 !important;
+  box-shadow: inset 0 0 0 2px #ff9800;
 }
 
-/* 3x3ボックスの境界線を強調 */
-.sudoku-cell:nth-child(3n) {
-  border-right: 2px solid #333;
+.sudoku-cell.same-number.selected {
+  background-color: #ff9800 !important;
+  color: white !important;
 }
 
-.sudoku-cell:nth-child(n+19):nth-child(-n+27),
-.sudoku-cell:nth-child(n+46):nth-child(-n+54) {
-  border-bottom: 2px solid #333;
+/* セル内のコンテンツ */
+.cell-value {
+  font-size: 1.2rem;
+  font-weight: bold;
 }
 
-/* 数字入力ボタン */
-.number-buttons {
+.cell-notes {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 0.5rem;
-  margin-bottom: 1rem;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  gap: 1px;
+  width: 100%;
+  height: 100%;
+  font-size: 0.4rem;
+  font-weight: normal;
 }
 
-.number-button {
+.note {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #666;
+  font-size: 0.4rem;
+}
+
+/* コントロール部分 */
+.sudoku-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.number-pad {
+  display: grid;
+  grid-template-columns: repeat(9, 1fr);
+  gap: 0.25rem;
+}
+
+.number-btn {
   background: #f8f9fa;
   border: 1px solid #dee2e6;
   border-radius: 4px;
-  padding: 0.75rem;
+  padding: 0.5rem;
   font-size: 1rem;
   font-weight: bold;
   cursor: pointer;
   transition: all 0.2s ease;
+  aspect-ratio: 1;
 }
 
-.number-button:hover {
+.number-btn:hover:not(:disabled) {
   background: #e9ecef;
   border-color: #adb5bd;
 }
 
-.number-button:active {
-  background: #dee2e6;
+.number-btn:disabled {
+  background: #f8f9fa;
+  color: #6c757d;
+  cursor: not-allowed;
+  opacity: 0.5;
 }
 
-.number-button.selected {
-  background: #007bff;
-  color: white;
-  border-color: #007bff;
-}
-
-.memo-button {
-  background: #6f42c1;
-  color: white;
-  border-color: #6f42c1;
-}
-
-.memo-button:hover {
-  background: #5a32a3;
-  border-color: #5a32a3;
-}
-
-.memo-button.active {
-  background: #4e2a8e;
-  border-color: #4e2a8e;
-}
-
-/* ゲーム制御ボタン */
-.game-controls {
+.action-buttons {
   display: flex;
   gap: 0.5rem;
   justify-content: center;
-  margin-top: 1rem;
 }
 
-.control-button {
+.mode-btn, .clear-btn, .hint-btn {
+  background: #6c757d;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.875rem;
+  transition: background-color 0.2s ease;
+}
+
+.mode-btn:hover, .clear-btn:hover, .hint-btn:hover {
+  background: #5a6268;
+}
+
+.mode-btn.active {
+  background: #6f42c1;
+}
+
+.mode-btn.active:hover {
+  background: #5a32a3;
+}
+
+.clear-btn:disabled, .hint-btn:disabled {
+  background: #6c757d;
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.hint-btn {
+  background: #17a2b8;
+}
+
+.hint-btn:hover {
+  background: #138496;
+}
+
+.difficulty-buttons {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+}
+
+.difficulty-buttons button {
   background: #28a745;
   color: white;
   border: none;
@@ -184,50 +257,8 @@
   transition: background-color 0.2s ease;
 }
 
-.control-button:hover {
+.difficulty-buttons button:hover {
   background: #218838;
-}
-
-.control-button:disabled {
-  background: #6c757d;
-  cursor: not-allowed;
-}
-
-.hint-button {
-  background: #17a2b8;
-}
-
-.hint-button:hover {
-  background: #138496;
-}
-
-.undo-button {
-  background: #ffc107;
-  color: #212529;
-}
-
-.undo-button:hover {
-  background: #e0a800;
-}
-
-/* ゲーム完了メッセージ */
-.game-complete {
-  text-align: center;
-  padding: 1rem;
-  background: #d4edda;
-  border: 1px solid #c3e6cb;
-  border-radius: 4px;
-  margin-top: 1rem;
-}
-
-.game-complete h4 {
-  margin: 0 0 0.5rem 0;
-  color: #155724;
-}
-
-.game-complete p {
-  margin: 0;
-  color: #155724;
 }
 
 /* レスポンシブ対応 */
@@ -246,16 +277,21 @@
     min-height: 30px;
   }
   
-  .number-buttons {
-    grid-template-columns: repeat(3, 1fr);
+  .number-pad {
+    grid-template-columns: repeat(5, 1fr);
+    gap: 0.5rem;
   }
   
-  .number-button {
-    padding: 0.5rem;
+  .number-btn {
+    padding: 0.75rem;
     font-size: 0.875rem;
   }
   
-  .game-controls {
+  .action-buttons {
+    flex-direction: column;
+  }
+  
+  .difficulty-buttons {
     flex-direction: column;
   }
 }
@@ -270,8 +306,9 @@
     min-height: 32px;
   }
   
-  .number-buttons {
-    grid-template-columns: repeat(4, 1fr);
+  .number-pad {
+    grid-template-columns: repeat(9, 1fr);
+    gap: 0.25rem;
   }
 }
 
@@ -296,25 +333,6 @@
   animation: numberPlace 0.3s ease-out;
 }
 
-/* メモ機能のスタイル */
-.sudoku-cell .memo-numbers {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  grid-template-rows: repeat(3, 1fr);
-  gap: 1px;
-  width: 100%;
-  height: 100%;
-  font-size: 0.4rem;
-  font-weight: normal;
-}
-
-.sudoku-cell .memo-number {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #666;
-}
-
 /* エラー状態のアニメーション */
 @keyframes errorShake {
   0%, 100% { transform: translateX(0); }
@@ -332,31 +350,22 @@
   color: #155724 !important;
 }
 
-/* 同じ数字ハイライト効果の改善 */
-.sudoku-cell.same-number {
-  background-color: #fff3e0 !important;
-  color: #f57c00 !important;
-  box-shadow: inset 0 0 0 2px #ff9800;
+/* ゲーム完了メッセージ */
+.game-complete {
+  text-align: center;
+  padding: 1rem;
+  background: #d4edda;
+  border: 1px solid #c3e6cb;
+  border-radius: 4px;
+  margin-top: 1rem;
 }
 
-.sudoku-cell.same-number.selected {
-  background-color: #ff9800 !important;
-  color: white !important;
+.game-complete h4 {
+  margin: 0 0 0.5rem 0;
+  color: #155724;
 }
 
-/* 選択されたセルの強調 */
-.sudoku-cell.selected {
-  background-color: #2196f3 !important;
-  color: white !important;
-  box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.3);
-}
-
-/* 関連セル（同じ行・列・ボックス）のハイライト */
-.sudoku-cell.related {
-  background-color: #e3f2fd !important;
-}
-
-.sudoku-cell.related.same-number {
-  background-color: #fff3e0 !important;
-  color: #f57c00 !important;
+.game-complete p {
+  margin: 0;
+  color: #155724;
 }

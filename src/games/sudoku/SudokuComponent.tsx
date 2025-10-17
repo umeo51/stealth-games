@@ -143,17 +143,19 @@ const SudokuComponent: React.FC<SudokuComponentProps> = ({ onGameComplete }) => 
       <div className="sudoku-header">
         <h3>数独</h3>
         <div className="game-info">
-          <span className="difficulty">難易度: {game.getDifficulty()}</span>
+          <span className="difficulty">難易度: {
+            game.getDifficulty() === 'easy' ? 'Easy' :
+            game.getDifficulty() === 'medium' ? 'Medium' : 'Hard'
+          }</span>
           {gameComplete && <span className="complete-badge">完了!</span>}
         </div>
       </div>
 
+      {/* 修正: グリッド構造を単純化して9x9のセルを直接表示 */}
       <div className="sudoku-grid">
-        {grid.map((row, rowIndex) => (
-          <div key={rowIndex} className="sudoku-row">
-            {row.map((_, colIndex) => renderCell(rowIndex, colIndex))}
-          </div>
-        ))}
+        {grid.map((row, rowIndex) => 
+          row.map((_, colIndex) => renderCell(rowIndex, colIndex))
+        )}
       </div>
 
       <div className="sudoku-controls">
