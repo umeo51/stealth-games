@@ -142,44 +142,47 @@
   border-color: #fbbf24;
 }
 
-/* 修正項目: カードの左上と右下に数字と記号を表示 */
-.card-corner {
-  position: absolute;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  font-size: 0.8rem;
-  line-height: 1;
-  font-weight: bold;
-  z-index: 100;
-  background: rgba(255, 255, 255, 0.9);
+/* 修正項目: カードの左上と右下に数字と記号を表示 - 強制適用 */
+.card .card-corner {
+  position: absolute !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  font-size: 0.8rem !important;
+  line-height: 1 !important;
+  font-weight: bold !important;
+  z-index: 100 !important;
+  background: transparent !important;
   border-radius: 2px;
   padding: 1px 2px;
+  pointer-events: none;
 }
 
-.card-corner.top-left {
-  top: 2px;
-  left: 2px;
+.card .card-corner.top-left {
+  top: 2px !important;
+  left: 2px !important;
 }
 
-.card-corner.bottom-right {
-  bottom: 2px;
-  right: 2px;
-  transform: rotate(180deg);
+.card .card-corner.bottom-right {
+  bottom: 2px !important;
+  right: 2px !important;
+  transform: rotate(180deg) !important;
 }
 
-.card-corner .rank {
-  font-size: 0.8rem;
-  line-height: 0.8;
-  margin: 0;
-  font-weight: bold;
+.card .card-corner .rank {
+  font-size: 0.8rem !important;
+  line-height: 0.8 !important;
+  margin: 0 !important;
+  font-weight: bold !important;
+  display: block !important;
 }
 
-.card-corner .suit {
-  font-size: 0.7rem;
-  line-height: 0.8;
-  margin: 0;
-  font-weight: bold;
+.card .card-corner .suit {
+  font-size: 0.7rem !important;
+  line-height: 0.8 !important;
+  margin: 0 !important;
+  font-weight: bold !important;
+  display: block !important;
 }
 
 .card-center {
