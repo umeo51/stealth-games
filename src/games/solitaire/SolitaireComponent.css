@@ -50,11 +50,20 @@
   gap: 0.5rem;
 }
 
-.tableau {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
+/* タブロー行の配置 */
+.tableau-row {
+  display: flex;
   gap: 0.5rem;
   min-height: 300px;
+  justify-content: center;
+}
+
+/* タブロー列の配置 */
+.tableau-column {
+  display: flex;
+  flex-direction: column;
+  min-width: 70px;
+  position: relative;
 }
 
 .pile {
@@ -96,13 +105,16 @@
   transform: rotate(5deg);
 }
 
-/* 修正項目: カードの重ね間隔を調整し、左上の数字と記号が見えるようにする */
-.card-container.stacked {
+/* タブロー列内のカード重ね表示 */
+.tableau-column .card-container {
   position: relative;
-  margin-top: -60px; /* 間隔を少し広げて左上が見えるようにする */
 }
 
-.card-container.stacked:first-child {
+.tableau-column .card-container:not(:first-child) {
+  margin-top: -50px; /* カードを重ねて表示 */
+}
+
+.tableau-column .card-container:first-child {
   margin-top: 0;
 }
 
@@ -166,7 +178,7 @@
 .card .card-corner.bottom-right {
   bottom: 2px !important;
   right: 2px !important;
-  transform: rotate(180deg) !important;
+  /* 回転を削除 - 左上と同じ向きで表示 */
 }
 
 .card .card-corner .rank {
