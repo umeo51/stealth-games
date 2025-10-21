@@ -125,23 +125,35 @@ const SolitaireComponent: React.FC<SolitaireComponentProps> = ({ onGameComplete 
       >
         {card.faceUp ? (
           <>
-            {/* 修正項目: 左上に数字と記号を表示 */}
+            {/* 左上に数字と記号を表示 */}
             <div className="card-corner top-left">
-              <div className="rank">{rankSymbols[card.rank]}</div>
-              <div className="suit">{suitSymbols[card.suit]}</div>
+              <div className="rank-large">{rankSymbols[card.rank]}</div>
+              <div className="suit-small">{suitSymbols[card.suit]}</div>
             </div>
-            {/* 中央の大きな記号 */}
+            {/* 中央の大きな表示 */}
             <div className="card-center">
-              <span className="suit-large">{suitSymbols[card.suit]}</span>
+              {card.rank === 'J' || card.rank === 'Q' || card.rank === 'K' ? (
+                <div className="face-card">
+                  <div className="face-rank">{rankSymbols[card.rank]}</div>
+                  <div className="face-suit">{suitSymbols[card.suit]}</div>
+                </div>
+              ) : (
+                <div className="number-card">
+                  <div className="number-rank">{rankSymbols[card.rank]}</div>
+                  <div className="number-suit">{suitSymbols[card.suit]}</div>
+                </div>
+              )}
             </div>
-            {/* 修正項目: 右下に数字と記号を表示（回転） */}
+            {/* 右下に数字と記号を表示 */}
             <div className="card-corner bottom-right">
-              <div className="rank">{rankSymbols[card.rank]}</div>
-              <div className="suit">{suitSymbols[card.suit]}</div>
+              <div className="rank-large">{rankSymbols[card.rank]}</div>
+              <div className="suit-small">{suitSymbols[card.suit]}</div>
             </div>
           </>
         ) : (
-          <span className="card-back">🂠</span>
+          <div className="card-back-design">
+            <div className="back-pattern"></div>
+          </div>
         )}
       </div>
     );
@@ -165,18 +177,17 @@ const SolitaireComponent: React.FC<SolitaireComponentProps> = ({ onGameComplete 
     
     // 標準的なソリティアの表示ロジック
     if (pileType === 'tableau') {
-      // タブローでは裏向きカードは完全に重ね、表向きカードのみ表示
+      // タブローでは裏向きカードを重ねて表示し、表向きカードは少しずつずらして表示
       return (
         <div className={`pile ${pileType}`}>
           {pile.cards.map((card: Card, index: number) => {
             const isSelected = selectedCard?.pile === pile && selectedCard?.cardIndex === index;
-            const isLastFaceDownCard = !card.faceUp && (index === pile.cards.length - 1 || pile.cards[index + 1]?.faceUp);
             const isFaceUpCard = card.faceUp;
             
-            // 裏向きカードは最後の1枚だけ表示、表向きカードはすべて表示
-            if (!card.faceUp && !isLastFaceDownCard) {
-              return null; // 裏向きカードの中間は非表示
-            }
+            // 裏向きカードは2pxずつずらし、表向きカードは20pxずつずらす
+            const topOffset = isFaceUpCard ? 
+              (pile.cards.filter((c, i) => i < index && !c.faceUp).length * 2) + (pile.cards.filter((c, i) => i < index && c.faceUp).length * 20) :
+              index * 2;
             
             return (
               <div
@@ -184,7 +195,7 @@ const SolitaireComponent: React.FC<SolitaireComponentProps> = ({ onGameComplete 
                 className={`card-container tableau-card ${isFaceUpCard ? 'face-up-stacked' : 'face-down'}`}
                 style={{
                   position: 'absolute',
-                  top: `${index * (isFaceUpCard ? 20 : 0)}px`,
+                  top: `${topOffset}px`,
                   zIndex: index
                 }}
                 onClick={() => handleCardClick(pile, index)}

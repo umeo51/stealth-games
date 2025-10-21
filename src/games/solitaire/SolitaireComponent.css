@@ -167,13 +167,13 @@
   border-color: #fbbf24;
 }
 
-/* 修正項目: カードの左上と右下に数字と記号を表示 - 強制適用 */
+/* カードの左上と右下に数字と記号を表示 - 見やすく改善 */
 .card .card-corner {
   position: absolute !important;
   display: flex !important;
   flex-direction: column !important;
   align-items: center !important;
-  font-size: 0.8rem !important;
+  font-size: 0.9rem !important;
   line-height: 1 !important;
   font-weight: bold !important;
   z-index: 100 !important;
@@ -184,13 +184,13 @@
 }
 
 .card .card-corner.top-left {
-  top: 2px !important;
-  left: 2px !important;
+  top: 3px !important;
+  left: 3px !important;
 }
 
 .card .card-corner.bottom-right {
-  bottom: 2px !important;
-  right: 2px !important;
+  bottom: 3px !important;
+  right: 3px !important;
   /* 回転を削除 - 左上と同じ向きで表示 */
 }
 
@@ -370,4 +370,93 @@
 
 .card.moving {
   animation: cardMove 0.3s ease-out;
+}
+
+/* 新しいカード表示スタイル - 見やすく改善 */
+.rank-large {
+  font-size: 1rem !important;
+  font-weight: bold !important;
+  line-height: 1 !important;
+}
+
+.suit-small {
+  font-size: 0.8rem !important;
+  line-height: 1 !important;
+}
+
+/* 中央表示の改善 */
+.card-center {
+  position: absolute !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  text-align: center !important;
+}
+
+/* 絵札（J, Q, K）の表示 */
+.face-card {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  gap: 2px !important;
+}
+
+.face-rank {
+  font-size: 1.2rem !important;
+  font-weight: bold !important;
+  line-height: 1 !important;
+}
+
+.face-suit {
+  font-size: 1rem !important;
+  line-height: 1 !important;
+}
+
+/* 数字カードの表示 */
+.number-card {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  gap: 1px !important;
+}
+
+.number-rank {
+  font-size: 1.1rem !important;
+  font-weight: bold !important;
+  line-height: 1 !important;
+}
+
+.number-suit {
+  font-size: 0.9rem !important;
+  line-height: 1 !important;
+}
+
+/* 裏向きカードのデザイン改善 */
+.card-back-design {
+  width: 100% !important;
+  height: 100% !important;
+  background: linear-gradient(45deg, #1e3a8a 25%, #3b82f6 25%, #3b82f6 50%, #1e3a8a 50%, #1e3a8a 75%, #3b82f6 75%) !important;
+  background-size: 8px 8px !important;
+  border-radius: 4px !important;
+  position: relative !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.back-pattern {
+  width: 30px !important;
+  height: 30px !important;
+  background: #ffffff !important;
+  border-radius: 50% !important;
+  opacity: 0.8 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.back-pattern::before {
+  content: '♠' !important;
+  font-size: 16px !important;
+  color: #1e3a8a !important;
 }
