@@ -176,28 +176,28 @@ const SolitaireComponent: React.FC<SolitaireComponentProps> = ({ onGameComplete 
       );
     }
     
-    // 標準的なソリティアの表示ロジック
+    // 標準的なソリティアの表示ロジック - 簡素化版
     if (pileType === 'tableau') {
-      // タブローでは裏向きカードを重ねて表示し、表向きカードは少しずつずらして表示
       return (
         <div className={`pile ${pileType}`}>
           {pile.cards.map((card: Card, index: number) => {
             const isSelected = selectedCard?.pile === pile && selectedCard?.cardIndex === index;
             const isFaceUpCard = card.faceUp;
             
-            // 裏向きカードは2pxずつずらし、表向きカードは20pxずつずらす
+            // 裏向きカードは3pxずつ、表向きカードは25pxずつずらす
             const topOffset = isFaceUpCard ? 
-              (pile.cards.filter((c, i) => i < index && !c.faceUp).length * 2) + (pile.cards.filter((c, i) => i < index && c.faceUp).length * 20) :
-              index * 2;
+              (pile.cards.slice(0, index).filter(c => !c.faceUp).length * 3) + (pile.cards.slice(0, index).filter(c => c.faceUp).length * 25) :
+              index * 3;
             
             return (
               <div
-                key={card.id}
+                key={`${card.suit}-${card.rank}-${index}`}
                 className={`card-container tableau-card ${isFaceUpCard ? 'face-up-stacked' : 'face-down'}`}
                 style={{
                   position: 'absolute',
                   top: `${topOffset}px`,
-                  zIndex: index
+                  left: '0px',
+                  zIndex: index + 1
                 }}
                 onClick={() => handleCardClick(pile, index)}
                 onDoubleClick={() => handleCardDoubleClick(pile, index)}
