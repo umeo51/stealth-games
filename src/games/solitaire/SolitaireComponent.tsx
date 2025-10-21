@@ -1,3 +1,4 @@
+// ソリティアコンポーネント - 裏向きカード表示修正版 v2.1
 import React, { useState, useEffect } from 'react';
 import { SolitaireGame, Card } from './SolitaireGame';
 import './SolitaireComponent.css';
