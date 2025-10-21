@@ -105,17 +105,30 @@
   transform: rotate(5deg);
 }
 
-/* タブロー列内のカード重ね表示 */
-.tableau-column .card-container {
+/* 標準的なソリティアタブローレイアウト */
+.tableau-column {
   position: relative;
+  min-height: 400px;
 }
 
-.tableau-column .card-container:not(:first-child) {
-  margin-top: -50px; /* カードを重ねて表示 */
+.tableau-column .pile {
+  position: relative;
+  width: 60px;
+  height: 400px;
 }
 
-.tableau-column .card-container:first-child {
-  margin-top: 0;
+.tableau-column .tableau-card {
+  position: absolute !important;
+  width: 60px;
+  height: 80px;
+}
+
+.tableau-column .face-down {
+  /* 裏向きカードは完全に重ねる */
+}
+
+.tableau-column .face-up-stacked {
+  /* 表向きカードは少しずつずらす */
 }
 
 .card {

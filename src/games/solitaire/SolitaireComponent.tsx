@@ -163,6 +163,42 @@ const SolitaireComponent: React.FC<SolitaireComponentProps> = ({ onGameComplete 
       );
     }
     
+    // 標準的なソリティアの表示ロジック
+    if (pileType === 'tableau') {
+      // タブローでは裏向きカードは完全に重ね、表向きカードのみ表示
+      return (
+        <div className={`pile ${pileType}`}>
+          {pile.cards.map((card: Card, index: number) => {
+            const isSelected = selectedCard?.pile === pile && selectedCard?.cardIndex === index;
+            const isLastFaceDownCard = !card.faceUp && (index === pile.cards.length - 1 || pile.cards[index + 1]?.faceUp);
+            const isFaceUpCard = card.faceUp;
+            
+            // 裏向きカードは最後の1枚だけ表示、表向きカードはすべて表示
+            if (!card.faceUp && !isLastFaceDownCard) {
+              return null; // 裏向きカードの中間は非表示
+            }
+            
+            return (
+              <div
+                key={card.id}
+                className={`card-container tableau-card ${isFaceUpCard ? 'face-up-stacked' : 'face-down'}`}
+                style={{
+                  position: 'absolute',
+                  top: `${index * (isFaceUpCard ? 20 : 0)}px`,
+                  zIndex: index
+                }}
+                onClick={() => handleCardClick(pile, index)}
+                onDoubleClick={() => handleCardDoubleClick(pile, index)}
+              >
+                {renderCard(card, isSelected)}
+              </div>
+            );
+          })}
+        </div>
+      );
+    }
+    
+    // その他のパイル（ストック、ウェイスト、ファウンデーション）
     return (
       <div className={`pile ${pileType || ''}`}>
         {pile.cards.map((card: Card, index: number) => {
@@ -172,7 +208,7 @@ const SolitaireComponent: React.FC<SolitaireComponentProps> = ({ onGameComplete 
           return (
             <div
               key={card.id}
-              className={`card-container ${pileType === 'tableau' ? 'stacked' : ''}`}
+              className="card-container"
               onClick={() => handleCardClick(pile, index)}
               onDoubleClick={() => handleCardDoubleClick(pile, index)}
             >
