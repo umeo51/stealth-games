@@ -184,10 +184,10 @@ const SolitaireComponent: React.FC<SolitaireComponentProps> = ({ onGameComplete 
             const isSelected = selectedCard?.pile === pile && selectedCard?.cardIndex === index;
             const isFaceUpCard = card.faceUp;
             
-            // 裏向きカードは3pxずつ、表向きカードは25pxずつずらす
+            // 裏向きカードは15pxずつ、表向きカードは25pxずつずらす
             const topOffset = isFaceUpCard ? 
-              (pile.cards.slice(0, index).filter(c => !c.faceUp).length * 3) + (pile.cards.slice(0, index).filter(c => c.faceUp).length * 25) :
-              index * 3;
+              (pile.cards.slice(0, index).filter(c => !c.faceUp).length * 15) + (pile.cards.slice(0, index).filter(c => c.faceUp).length * 25) :
+              index * 15;
             
             return (
               <div
