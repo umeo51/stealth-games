@@ -1,4 +1,4 @@
-// ソリティアコンポーネント - 裏向きカード表示修正版 v2.1
+// ソリティアコンポーネント - 裏向きカード表示修正版 v2.2 - キャッシュバスティング対応
 import React, { useState, useEffect } from 'react';
 import { SolitaireGame, Card } from './SolitaireGame';
 import './SolitaireComponent.css';
@@ -178,6 +178,11 @@ const SolitaireComponent: React.FC<SolitaireComponentProps> = ({ onGameComplete 
     
     // 標準的なソリティアの表示ロジック - 簡素化版
     if (pileType === 'tableau') {
+      // デバッグ用: 裏向きカード数をログ出力
+      const faceDownCount = pile.cards.filter(c => !c.faceUp).length;
+      if (faceDownCount > 1) {
+        console.log(`Tableau pile has ${faceDownCount} face-down cards - v1.0.5`);
+      }
       return (
         <div className={`pile ${pileType}`}>
           {pile.cards.map((card: Card, index: number) => {

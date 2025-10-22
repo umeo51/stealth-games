@@ -1,0 +1,12 @@
+Cache busting marker for version 1.0.5
+Timestamp: ${new Date().toISOString()}
+Purpose: Force Vercel CDN to serve new version with Solitaire face-down card fix
+
+Changes in this version:
+- Added timestamp-based file naming in vite.config.ts
+- Updated version to 1.0.5
+- Added cache control meta tags to index.html
+- Added debug logging to Solitaire component
+- Created this cache busting marker file
+
+This file ensures that the deployment is recognized as a new version by Vercel.
