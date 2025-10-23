@@ -1,4 +1,4 @@
-// ソリティアコンポーネント - 裏向きカード表示修正版 v2.5 - モバイル最適化対応
+// ソリティアコンポーネント - 裏向きカード表示修正版 v2.6 - 連続カードシーケンス自動移動対応
 import React, { useState, useEffect } from 'react';
 import { SolitaireGame, Card } from './SolitaireGame';
 import './SolitaireComponent.css';

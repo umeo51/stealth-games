@@ -224,23 +224,50 @@ export class SolitaireGame {
     const card = fromPile.cards[cardIndex];
     if (!card.faceUp) return false;
     
-    // 1. まずファウンデーションへの移動を試行
-    for (const foundation of this.foundation) {
-      if (this.isValidFoundationMove(card, foundation)) {
-        return this.moveCard(fromPile, foundation, cardIndex, 1);
+    // 1. まずファウンデーションへの移動を試行（単一カードのみ）
+    if (cardIndex === fromPile.cards.length - 1) {
+      for (const foundation of this.foundation) {
+        if (this.isValidFoundationMove(card, foundation)) {
+          return this.moveCard(fromPile, foundation, cardIndex, 1);
+        }
       }
     }
     
-    // 2. 次にタブローへの移動を試行（単一カードの場合のみ）
-    if (cardIndex === fromPile.cards.length - 1) {
+    // 2. 次にタブローへの移動を試行（連続したカードシーケンス対応）
+    // 移動するカードの枚数を計算（cardIndexから最後まで）
+    const cardsToMove = fromPile.cards.length - cardIndex;
+    
+    // 連続したカードシーケンスが有効かチェック
+    if (this.isValidCardSequence(fromPile.cards, cardIndex)) {
       for (const tableau of this.tableau) {
         if (tableau !== fromPile && this.isValidTableauMove(card, tableau)) {
-          return this.moveCard(fromPile, tableau, cardIndex, 1);
+          return this.moveCard(fromPile, tableau, cardIndex, cardsToMove);
         }
       }
     }
     
     return false;
+  }
+
+  // 連続したカードシーケンスが有効かチェック
+  private isValidCardSequence(cards: Card[], startIndex: number): boolean {
+    if (startIndex >= cards.length) return false;
+    
+    for (let i = startIndex; i < cards.length - 1; i++) {
+      const currentCard = cards[i];
+      const nextCard = cards[i + 1];
+      
+      // 両方のカードが表向きでなければならない
+      if (!currentCard.faceUp || !nextCard.faceUp) return false;
+      
+      // ランクが連続している（降順）かチェック
+      if (currentCard.rank !== nextCard.rank + 1) return false;
+      
+      // 色が交互になっているかチェック
+      if (this.getCardColor(currentCard) === this.getCardColor(nextCard)) return false;
+    }
+    
+    return true;
   }
 
   // 全ての裏向きカードが表になっているかチェック
