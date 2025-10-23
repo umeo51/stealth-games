@@ -240,38 +240,56 @@
   line-height: 1;
 }
 
-.card-back {
-  font-size: 2rem;
-}
-
-.game-controls {
+.solitaire-controls {
   display: flex;
   gap: 1rem;
   justify-content: center;
   margin-top: 1rem;
 }
 
-.control-button {
+.solitaire-controls button {
+  padding: 0.5rem 1rem;
   background: #28a745;
   color: white;
   border: none;
-  padding: 0.5rem 1rem;
   border-radius: 4px;
   cursor: pointer;
   font-size: 0.875rem;
-  transition: background-color 0.2s ease;
+  transition: background-color 0.2s;
 }
 
-.control-button:hover {
+.solitaire-controls button:hover {
   background: #218838;
 }
 
-.control-button:disabled {
+.solitaire-controls button:disabled {
   background: #6c757d;
   cursor: not-allowed;
 }
 
-.hint-button {
+/* 自動上がりボタンの特別スタイル */
+.auto-complete-btn {
+  background: #ffc107 !important;
+  color: #212529 !important;
+  font-weight: bold;
+  animation: pulse 2s infinite;
+}
+
+.auto-complete-btn:hover {
+  background: #e0a800 !important;
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(255, 193, 7, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(255, 193, 7, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 193, 7, 0);
+  }
+}.hint-button {
   background: #17a2b8;
 }
 

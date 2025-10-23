@@ -1,4 +1,4 @@
-// ソリティアコンポーネント - 裏向きカード表示修正版 v2.3 - ウェイストパイルカード重ね表示対応
+// ソリティアコンポーネント - 裏向きカード表示修正版 v2.4 - ダブルタップ自動移動・自動上がり機能対応
 import React, { useState, useEffect } from 'react';
 import { SolitaireGame, Card } from './SolitaireGame';
 import './SolitaireComponent.css';
@@ -23,10 +23,18 @@ const SolitaireComponent: React.FC<SolitaireComponentProps> = ({ onGameComplete 
     }
   };
 
-  // タイマー更新
+  // タイマー更新と自動上がりチェック
   useEffect(() => {
     const interval = setInterval(() => {
       setGameState(game.getGameState());
+      
+      // 定期的に自動上がりが可能かチェック
+      if (game.canAutoComplete()) {
+        const autoMoved = game.performAutoComplete();
+        if (autoMoved) {
+          setGameState(game.getGameState());
+        }
+      }
     }, 1000);
 
     return () => clearInterval(interval);
@@ -76,12 +84,22 @@ const SolitaireComponent: React.FC<SolitaireComponentProps> = ({ onGameComplete 
     }
   };
 
-  // ダブルクリック処理（ファウンデーションへの自動移動）
+  // ダブルクリック処理（最適な場所への自動移動）
   const handleCardDoubleClick = (pile: any, cardIndex: number) => {
-    const success = game.autoMoveToFoundation(pile, cardIndex);
+    const success = game.autoMoveCard(pile, cardIndex);
     if (success) {
       setSelectedCard(null);
       updateGameState();
+      
+      // 移動後、自動上がりが可能かチェック
+      if (game.canAutoComplete()) {
+        setTimeout(() => {
+          const autoMoved = game.performAutoComplete();
+          if (autoMoved) {
+            updateGameState();
+          }
+        }, 300); // 少し遅延してアニメーションを見やすくする
+      }
     }
   };
 
@@ -104,6 +122,17 @@ const SolitaireComponent: React.FC<SolitaireComponentProps> = ({ onGameComplete 
     const hint = game.getHint();
     if (hint) {
       setSelectedCard({ pile: hint.from, cardIndex: hint.cardIndex });
+    }
+  };
+
+  // 手動自動上がり機能
+  const handleAutoComplete = () => {
+    if (game.canAutoComplete()) {
+      const moved = game.performAutoComplete();
+      if (moved) {
+        setSelectedCard(null);
+        updateGameState();
+      }
     }
   };
 
@@ -330,6 +359,9 @@ const SolitaireComponent: React.FC<SolitaireComponentProps> = ({ onGameComplete 
       <div className="solitaire-controls">
         <button onClick={handleNewGame}>新しいゲーム</button>
         <button onClick={handleHint}>ヒント</button>
+        {game.canAutoComplete() && (
+          <button onClick={handleAutoComplete} className="auto-complete-btn">自動上がり</button>
+        )}
         {selectedCard && (
           <button onClick={() => setSelectedCard(null)}>選択解除</button>
         )}

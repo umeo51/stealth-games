@@ -217,6 +217,84 @@ export class SolitaireGame {
     return false;
   }
 
+  // ダブルタップで最適な場所に自動移動
+  autoMoveCard(fromPile: Pile, cardIndex: number): boolean {
+    if (fromPile.cards.length <= cardIndex) return false;
+    
+    const card = fromPile.cards[cardIndex];
+    if (!card.faceUp) return false;
+    
+    // 1. まずファウンデーションへの移動を試行
+    for (const foundation of this.foundation) {
+      if (this.isValidFoundationMove(card, foundation)) {
+        return this.moveCard(fromPile, foundation, cardIndex, 1);
+      }
+    }
+    
+    // 2. 次にタブローへの移動を試行（単一カードの場合のみ）
+    if (cardIndex === fromPile.cards.length - 1) {
+      for (const tableau of this.tableau) {
+        if (tableau !== fromPile && this.isValidTableauMove(card, tableau)) {
+          return this.moveCard(fromPile, tableau, cardIndex, 1);
+        }
+      }
+    }
+    
+    return false;
+  }
+
+  // 全ての裏向きカードが表になっているかチェック
+  areAllCardsFaceUp(): boolean {
+    return this.tableau.every(pile => 
+      pile.cards.every(card => card.faceUp)
+    );
+  }
+
+  // 自動上がり機能：可能なカードを全てファウンデーションに移動
+  performAutoComplete(): boolean {
+    let moved = false;
+    let continueMoving = true;
+    
+    while (continueMoving) {
+      continueMoving = false;
+      
+      // ウェイストからファウンデーションへの移動
+      if (this.waste.cards.length > 0) {
+        const topCard = this.waste.cards[this.waste.cards.length - 1];
+        for (const foundation of this.foundation) {
+          if (this.isValidFoundationMove(topCard, foundation)) {
+            this.moveCard(this.waste, foundation, this.waste.cards.length - 1, 1);
+            moved = true;
+            continueMoving = true;
+            break;
+          }
+        }
+      }
+      
+      // タブローからファウンデーションへの移動
+      if (!continueMoving) {
+        for (const tableau of this.tableau) {
+          if (tableau.cards.length > 0) {
+            const topCard = tableau.cards[tableau.cards.length - 1];
+            if (topCard.faceUp) {
+              for (const foundation of this.foundation) {
+                if (this.isValidFoundationMove(topCard, foundation)) {
+                  this.moveCard(tableau, foundation, tableau.cards.length - 1, 1);
+                  moved = true;
+                  continueMoving = true;
+                  break;
+                }
+              }
+            }
+          }
+          if (continueMoving) break;
+        }
+      }
+    }
+    
+    return moved;
+  }
+
   // ゲームが完了しているかチェック
   isGameComplete(): boolean {
     return this.foundation.every(pile => pile.cards.length === 13);
@@ -231,6 +309,12 @@ export class SolitaireGame {
     
     // より詳細な行き詰まり判定は複雑なので、ここでは基本的なチェックのみ
     return false;
+  }
+
+  // 自動上がりが可能かチェック
+  canAutoComplete(): boolean {
+    // 全ての裏向きカードが表になっている場合のみ自動上がり可能
+    return this.areAllCardsFaceUp();
   }
 
   // ヒント機能：可能な移動を取得
