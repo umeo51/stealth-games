@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import SudokuComponent from './games/sudoku/SudokuComponent'
 import SolitaireComponent from './games/solitaire/SolitaireComponent'
 import MinesweeperComponent from './games/minesweeper/MinesweeperComponent'
@@ -46,6 +46,17 @@ const mockNews: NewsArticle[] = [
 function App() {
   const [gameVisible, setGameVisible] = useState(false);
   const [currentGame, setCurrentGame] = useState<'sudoku' | 'solitaire' | 'minesweeper'>('sudoku');
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+  // モバイル表示の検知
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   // 数独ゲーム完了ハンドラー
   const handleSudokuComplete = (won: boolean, time: number, difficulty: string) => {
@@ -81,20 +92,36 @@ function App() {
       <header style={{ 
         backgroundColor: '#2c3e50', 
         color: 'white', 
-        padding: '1rem 2rem',
+        padding: isMobile ? '0.75rem 1rem' : '1rem 2rem',
         display: 'flex',
         justifyContent: 'space-between',
-        alignItems: 'center'
+        alignItems: 'center',
+        flexWrap: isMobile ? 'wrap' : 'nowrap',
+        gap: isMobile ? '0.5rem' : '0'
       }}>
-        <h1 style={{ margin: 0, fontSize: '1.5rem' }}>Business Research Portal</h1>
-        <div style={{ display: 'flex', gap: '1rem' }}>
+        <h1 style={{ 
+          margin: 0, 
+          fontSize: isMobile ? '1.2rem' : '1.5rem',
+          width: isMobile ? '100%' : 'auto',
+          textAlign: isMobile ? 'center' : 'left',
+          order: isMobile ? -1 : 0
+        }}>Business Research Portal</h1>
+        <div style={{ 
+          display: 'flex', 
+          gap: isMobile ? '0.5rem' : '1rem',
+          flexWrap: isMobile ? 'wrap' : 'nowrap',
+          justifyContent: isMobile ? 'center' : 'flex-end',
+          width: isMobile ? '100%' : 'auto'
+        }}>
           <button style={{ 
             backgroundColor: '#e8f5e8', 
             color: '#2d5016', 
             border: 'none', 
-            padding: '0.5rem 1rem', 
+            padding: isMobile ? '0.5rem 0.75rem' : '0.5rem 1rem', 
             borderRadius: '4px',
-            cursor: 'pointer'
+            cursor: 'pointer',
+            fontSize: isMobile ? '0.875rem' : '1rem',
+            minHeight: isMobile ? '40px' : 'auto'
           }}>
             ニュース
           </button>
@@ -104,9 +131,11 @@ function App() {
               backgroundColor: gameVisible ? '#ffebcd' : '#e6f3ff', 
               color: gameVisible ? '#8b4513' : '#1e3a8a', 
               border: 'none', 
-              padding: '0.5rem 1rem', 
+              padding: isMobile ? '0.5rem 0.75rem' : '0.5rem 1rem', 
               borderRadius: '4px',
-              cursor: 'pointer'
+              cursor: 'pointer',
+              fontSize: isMobile ? '0.875rem' : '1rem',
+              minHeight: isMobile ? '40px' : 'auto'
             }}
           >
             {gameVisible ? 'ゲームを隠す' : 'ゲームを表示'}
@@ -115,9 +144,11 @@ function App() {
             backgroundColor: '#fff4e6', 
             color: '#cc7a00', 
             border: 'none', 
-            padding: '0.5rem 1rem', 
+            padding: isMobile ? '0.5rem 0.75rem' : '0.5rem 1rem', 
             borderRadius: '4px',
-            cursor: 'pointer'
+            cursor: 'pointer',
+            fontSize: isMobile ? '0.875rem' : '1rem',
+            minHeight: isMobile ? '40px' : 'auto'
           }}>
             ランキング
           </button>
@@ -126,73 +157,85 @@ function App() {
             backgroundColor: '#f0f0f0', 
             color: '#333', 
             border: 'none', 
-            padding: '0.5rem 1rem', 
+            padding: isMobile ? '0.5rem 0.75rem' : '0.5rem 1rem', 
             borderRadius: '4px',
             cursor: 'pointer',
             display: 'flex',
             alignItems: 'center',
-            gap: '0.5rem'
+            gap: '0.5rem',
+            fontSize: isMobile ? '0.875rem' : '1rem',
+            minHeight: isMobile ? '40px' : 'auto'
           }}>
-            <User size={20} />
+            <User size={isMobile ? 16 : 20} />
             <span>ゲスト</span>
           </button>
         </div>
       </header>
 
       {/* ヘッダー広告エリア（修正項目：追従しない固定表示） */}
-      <div style={{ 
-        backgroundColor: '#f5f5f5', 
-        padding: '1rem', 
-        textAlign: 'center',
-        borderBottom: '1px solid #ddd'
-      }}>
-        ヘッダー広告エリア
-      </div>
+      {!isMobile && (
+        <div style={{ 
+          backgroundColor: '#f5f5f5', 
+          padding: '1rem', 
+          textAlign: 'center',
+          borderBottom: '1px solid #ddd'
+        }}>
+          ヘッダー広告エリア
+        </div>
+      )}
 
       {/* メインコンテンツ（修正項目：ニュースと広告が同じスクロール、画面幅最大活用） */}
       <div style={{ 
         display: 'flex', 
-        minHeight: 'calc(100vh - 200px)',
-        gap: '1rem',
-        padding: '1rem'
+        flexDirection: isMobile ? 'column' : 'row',
+        minHeight: isMobile ? 'auto' : 'calc(100vh - 200px)',
+        gap: isMobile ? '0.5rem' : '1rem',
+        padding: isMobile ? '0.5rem' : '1rem'
       }}>
         {/* ニュースセクション */}
         <div style={{ 
-          flex: '3',
+          flex: isMobile ? '1' : '3',
           backgroundColor: 'white',
           borderRadius: '8px',
-          padding: '1.5rem',
-          boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+          padding: isMobile ? '1rem' : '1.5rem',
+          boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+          order: isMobile ? 1 : 0
         }}>
           <h2 style={{ 
             marginTop: 0, 
-            marginBottom: '1.5rem',
+            marginBottom: isMobile ? '1rem' : '1.5rem',
             color: '#2c3e50',
-            fontSize: '1.5rem'
+            fontSize: isMobile ? '1.3rem' : '1.5rem',
+            textAlign: isMobile ? 'center' : 'left'
           }}>
             最新ニュース
           </h2>
           
           {/* 修正項目：ニュースにサムネイル表示追加 */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: isMobile ? '1rem' : '1.5rem' }}>
             {mockNews.map((article) => (
               <div key={article.id} style={{ 
                 display: 'flex', 
-                gap: '1rem',
-                padding: '1rem',
+                flexDirection: isMobile ? 'column' : 'row',
+                gap: isMobile ? '0.75rem' : '1rem',
+                padding: isMobile ? '0.75rem' : '1rem',
                 border: '1px solid #e9ecef',
                 borderRadius: '8px',
                 backgroundColor: '#fafafa'
               }}>
                 {/* サムネイル画像 */}
                 {article.image_url && (
-                  <div style={{ flexShrink: 0 }}>
+                  <div style={{ 
+                    flexShrink: 0,
+                    alignSelf: isMobile ? 'center' : 'flex-start'
+                  }}>
                     <img 
                       src={article.image_url} 
                       alt={article.title}
                       style={{ 
-                        width: '150px', 
-                        height: '100px', 
+                        width: isMobile ? '100%' : '150px', 
+                        maxWidth: isMobile ? '200px' : '150px',
+                        height: isMobile ? 'auto' : '100px', 
                         objectFit: 'cover',
                         borderRadius: '4px'
                       }}
@@ -209,21 +252,25 @@ function App() {
                 <div style={{ flex: 1 }}>
                   <h3 style={{ 
                     margin: '0 0 0.5rem 0',
-                    fontSize: '1.1rem',
-                    color: '#2c3e50'
+                    fontSize: isMobile ? '1rem' : '1.1rem',
+                    color: '#2c3e50',
+                    textAlign: isMobile ? 'center' : 'left'
                   }}>
                     {article.title}
                   </h3>
                   <p style={{ 
                     margin: '0 0 0.5rem 0',
                     color: '#555',
-                    lineHeight: '1.5'
+                    lineHeight: '1.5',
+                    fontSize: isMobile ? '0.9rem' : '1rem',
+                    textAlign: isMobile ? 'center' : 'left'
                   }}>
                     {article.description}
                   </p>
                   <div style={{ 
-                    fontSize: '0.875rem',
-                    color: '#6c757d'
+                    fontSize: isMobile ? '0.8rem' : '0.875rem',
+                    color: '#6c757d',
+                    textAlign: isMobile ? 'center' : 'left'
                   }}>
                     {article.source} • {article.published_at}
                   </div>
@@ -236,16 +283,19 @@ function App() {
         {/* ゲームエリア（修正項目：表示幅を1.5倍程度） */}
         {gameVisible && (
           <div style={{ 
-            flex: '2',
+            flex: isMobile ? '1' : '2',
             backgroundColor: 'white',
             borderRadius: '8px',
-            padding: '1.5rem',
-            boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+            padding: isMobile ? '1rem' : '1.5rem',
+            boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+            order: isMobile ? 0 : 1
           }}>
             <h2 style={{ 
               marginTop: 0, 
               marginBottom: '1rem',
-              color: '#2c3e50'
+              color: '#2c3e50',
+              fontSize: isMobile ? '1.3rem' : '1.5rem',
+              textAlign: isMobile ? 'center' : 'left'
             }}>
               ゲームエリア
             </h2>
@@ -253,9 +303,10 @@ function App() {
             {/* ゲーム選択ボタン */}
             <div style={{ 
               display: 'flex', 
-              gap: '0.5rem', 
+              gap: isMobile ? '0.25rem' : '0.5rem', 
               marginBottom: '1rem',
-              flexWrap: 'wrap'
+              flexWrap: 'wrap',
+              justifyContent: isMobile ? 'center' : 'flex-start'
             }}>
               <button
                 onClick={() => setCurrentGame('sudoku')}
@@ -263,10 +314,12 @@ function App() {
                   backgroundColor: currentGame === 'sudoku' ? '#007bff' : '#6c757d',
                   color: 'white',
                   border: 'none',
-                  padding: '0.5rem 1rem',
+                  padding: isMobile ? '0.5rem 0.75rem' : '0.5rem 1rem',
                   borderRadius: '4px',
                   cursor: 'pointer',
-                  fontSize: '0.875rem'
+                  fontSize: isMobile ? '0.8rem' : '0.875rem',
+                  minHeight: isMobile ? '40px' : 'auto',
+                  flex: isMobile ? '1' : 'none'
                 }}
               >
                 数独
@@ -277,10 +330,12 @@ function App() {
                   backgroundColor: currentGame === 'solitaire' ? '#007bff' : '#6c757d',
                   color: 'white',
                   border: 'none',
-                  padding: '0.5rem 1rem',
+                  padding: isMobile ? '0.5rem 0.75rem' : '0.5rem 1rem',
                   borderRadius: '4px',
                   cursor: 'pointer',
-                  fontSize: '0.875rem'
+                  fontSize: isMobile ? '0.8rem' : '0.875rem',
+                  minHeight: isMobile ? '40px' : 'auto',
+                  flex: isMobile ? '1' : 'none'
                 }}
               >
                 ソリティア
@@ -291,10 +346,12 @@ function App() {
                   backgroundColor: currentGame === 'minesweeper' ? '#007bff' : '#6c757d',
                   color: 'white',
                   border: 'none',
-                  padding: '0.5rem 1rem',
+                  padding: isMobile ? '0.5rem 0.75rem' : '0.5rem 1rem',
                   borderRadius: '4px',
                   cursor: 'pointer',
-                  fontSize: '0.875rem'
+                  fontSize: isMobile ? '0.8rem' : '0.875rem',
+                  minHeight: isMobile ? '40px' : 'auto',
+                  flex: isMobile ? '1' : 'none'
                 }}
               >
                 マインスイーパー
@@ -305,7 +362,7 @@ function App() {
             <div style={{ 
               border: '1px solid #dee2e6',
               borderRadius: '8px',
-              padding: '1rem',
+              padding: isMobile ? '0.5rem' : '1rem',
               backgroundColor: '#f8f9fa',
               overflow: 'auto'
             }}>
@@ -315,10 +372,11 @@ function App() {
         )}
 
         {/* サイドバー広告（修正項目：固定表示、追従しない） */}
-        <div style={{ 
-          width: '300px',
-          flexShrink: 0
-        }}>
+        {!isMobile && (
+          <div style={{ 
+            width: '300px',
+            flexShrink: 0
+          }}>
           <div style={{ 
             backgroundColor: '#f8f9fa',
             border: '1px solid #dee2e6',
@@ -361,7 +419,8 @@ function App() {
               追加広告スペース
             </div>
           </div>
-        </div>
+          </div>
+        )}
       </div>
     </div>
   );

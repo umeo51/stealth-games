@@ -1,1 +1,32 @@
 /* App specific styles */
+
+/* モバイル最適化 */
+@media (max-width: 768px) {
+  .App {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  /* スクロールバーのスタイル調整 */
+  * {
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  /* タッチターゲットサイズの最適化 */
+  button {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  /* フォントサイズの調整 */
+  body {
+    font-size: 16px; /* iOSのズーム防止 */
+  }
+  
+  /* ゲームエリアのスクロール最適化 */
+  .game-container {
+    max-height: 70vh;
+    overflow-y: auto;
+  }
+}
