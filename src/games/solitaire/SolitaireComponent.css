@@ -154,6 +154,31 @@
   height: 80px;
 }
 
+.foundation-card {
+  position: absolute !important;
+  width: 60px;
+  height: 80px;
+}
+
+/* ファウンデーションパイルのスタイル */
+.pile.foundation {
+  position: relative;
+  width: 60px;
+  height: 80px;
+}
+
+/* モバイル用ファウンデーションパイル */
+@media (max-width: 768px) {
+  .pile.foundation {
+    width: 40px;
+    height: 50px;
+  }
+  
+  .foundation-card {
+    width: 40px !important;
+    height: 50px !important;
+  }
+}
 /* モバイル用ウェイストパイル */
 @media (max-width: 768px) {
   .pile.waste {

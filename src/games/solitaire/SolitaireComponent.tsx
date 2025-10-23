@@ -1,4 +1,4 @@
-// ソリティアコンポーネント - 裏向きカード表示修正版 v2.6 - 連続カードシーケンス自動移動対応
+// ソリティアコンポーネント - 裏向きカード表示修正版 v2.7 - ファウンデーションカード重ね表示対応
 import React, { useState, useEffect } from 'react';
 import { SolitaireGame, Card } from './SolitaireGame';
 import './SolitaireComponent.css';
@@ -284,7 +284,36 @@ const SolitaireComponent: React.FC<SolitaireComponentProps> = ({ onGameComplete 
       );
     }
     
-    // その他のパイル（ストック、ファウンデーション）
+    // ファウンデーションの特別な表示ロジック（カードをぴったり重ねる）
+    if (pileType === 'foundation') {
+      return (
+        <div className={`pile ${pileType}`}>
+          {pile.cards.map((card: Card, index: number) => {
+            const isSelected = selectedCard?.pile === pile && selectedCard?.cardIndex === index;
+            const isTopCard = index === pile.cards.length - 1;
+            
+            return (
+              <div
+                key={card.id}
+                className="card-container foundation-card"
+                style={{
+                  position: 'absolute',
+                  top: '0px',
+                  left: '0px',
+                  zIndex: index + 1
+                }}
+                onClick={() => handleCardClick(pile, index)}
+                onDoubleClick={() => handleCardDoubleClick(pile, index)}
+              >
+                {renderCard(card, isSelected)}
+              </div>
+            );
+          })}
+        </div>
+      );
+    }
+    
+    // その他のパイル（ストック）
     return (
       <div className={`pile ${pileType || ''}`}>
         {pile.cards.map((card: Card, index: number) => {
