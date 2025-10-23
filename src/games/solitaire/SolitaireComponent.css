@@ -73,6 +73,19 @@
   cursor: pointer;
 }
 
+/* ウェイストパイル（山札から引いたカード）の特別なスタイル */
+.pile.waste {
+  position: relative;
+  width: 100px; /* 重ねたカードが見えるように幅を広げる */
+  height: 80px;
+}
+
+.waste-card {
+  position: absolute !important;
+  width: 60px;
+  height: 80px;
+}
+
 .pile.empty {
   border: 2px dashed rgba(255,255,255,0.3);
   border-radius: 6px;

@@ -1,4 +1,4 @@
-// ソリティアコンポーネント - 裏向きカード表示修正版 v2.2 - キャッシュバスティング対応
+// ソリティアコンポーネント - 裏向きカード表示修正版 v2.3 - ウェイストパイルカード重ね表示対応
 import React, { useState, useEffect } from 'react';
 import { SolitaireGame, Card } from './SolitaireGame';
 import './SolitaireComponent.css';
@@ -215,7 +215,43 @@ const SolitaireComponent: React.FC<SolitaireComponentProps> = ({ onGameComplete 
       );
     }
     
-    // その他のパイル（ストック、ウェイスト、ファウンデーション）
+    // ウェイストパイル（山札から引いたカード）の特別な表示ロジック
+    if (pileType === 'waste') {
+      return (
+        <div className={`pile ${pileType}`}>
+          {pile.cards.map((card: Card, index: number) => {
+            const isSelected = selectedCard?.pile === pile && selectedCard?.cardIndex === index;
+            const isTopCard = index === pile.cards.length - 1;
+            
+            // 最後の3枚のカードのみ表示し、少しずつずらして重ねる
+            const visibleCards = pile.cards.slice(-3);
+            const visibleIndex = visibleCards.findIndex((c: Card) => c.id === card.id);
+            
+            // 表示対象外のカードはスキップ
+            if (visibleIndex === -1) return null;
+            
+            return (
+              <div
+                key={card.id}
+                className="card-container waste-card"
+                style={{
+                  position: 'absolute',
+                  left: `${visibleIndex * 20}px`, // 20pxずつ右にずらす
+                  top: '0px',
+                  zIndex: index + 1
+                }}
+                onClick={() => handleCardClick(pile, index)}
+                onDoubleClick={() => handleCardDoubleClick(pile, index)}
+              >
+                {renderCard(card, isSelected)}
+              </div>
+            );
+          })}
+        </div>
+      );
+    }
+    
+    // その他のパイル（ストック、ファウンデーション）
     return (
       <div className={`pile ${pileType || ''}`}>
         {pile.cards.map((card: Card, index: number) => {
@@ -265,7 +301,7 @@ const SolitaireComponent: React.FC<SolitaireComponentProps> = ({ onGameComplete 
             
             <div className="waste">
               {gameState.waste.cards.length > 0 ? (
-                renderPile(gameState.waste)
+                renderPile(gameState.waste, undefined, 'waste')
               ) : (
                 <div className="empty-slot"></div>
               )}
