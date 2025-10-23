@@ -133,7 +133,7 @@ const SolitaireComponent: React.FC<SolitaireComponentProps> = ({ onGameComplete 
             </div>
             {/* 中央の大きな表示 */}
             <div className="card-center">
-              {card.rank === 'J' || card.rank === 'Q' || card.rank === 'K' ? (
+              {card.rank === 11 || card.rank === 12 || card.rank === 13 ? (
                 <div className="face-card">
                   <div className="face-rank">{rankSymbols[card.rank]}</div>
                   <div className="face-suit">{suitSymbols[card.suit]}</div>
@@ -179,7 +179,7 @@ const SolitaireComponent: React.FC<SolitaireComponentProps> = ({ onGameComplete 
     // 標準的なソリティアの表示ロジック - 簡素化版
     if (pileType === 'tableau') {
       // デバッグ用: 裏向きカード数をログ出力
-      const faceDownCount = pile.cards.filter(c => !c.faceUp).length;
+      const faceDownCount = pile.cards.filter((c: Card) => !c.faceUp).length;
       if (faceDownCount > 1) {
         console.log(`Tableau pile has ${faceDownCount} face-down cards - v1.0.5`);
       }
@@ -191,7 +191,7 @@ const SolitaireComponent: React.FC<SolitaireComponentProps> = ({ onGameComplete 
             
             // 裏向きカードは15pxずつ、表向きカードは25pxずつずらす
             const topOffset = isFaceUpCard ? 
-              (pile.cards.slice(0, index).filter(c => !c.faceUp).length * 15) + (pile.cards.slice(0, index).filter(c => c.faceUp).length * 25) :
+              (pile.cards.slice(0, index).filter((c: Card) => !c.faceUp).length * 15) + (pile.cards.slice(0, index).filter((c: Card) => c.faceUp).length * 25) :
               index * 15;
             
             return (
