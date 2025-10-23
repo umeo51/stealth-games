@@ -9,6 +9,16 @@
   color: white;
 }
 
+/* モバイル最適化 */
+@media (max-width: 768px) {
+  .solitaire-container {
+    padding: 0.5rem;
+    margin: 0;
+    border-radius: 0;
+    min-height: 100vh;
+  }
+}
+
 .solitaire-header {
   display: flex;
   justify-content: space-between;
@@ -30,6 +40,26 @@
   font-size: 0.875rem;
 }
 
+/* モバイル用ヘッダー */
+@media (max-width: 768px) {
+  .solitaire-header {
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .solitaire-header h3 {
+    font-size: 1.1rem;
+    text-align: center;
+  }
+  
+  .game-info {
+    justify-content: center;
+    gap: 0.75rem;
+    font-size: 0.8rem;
+  }
+}
+
 .solitaire-board {
   margin-bottom: 1rem;
 }
@@ -38,6 +68,22 @@
   display: flex;
   justify-content: space-between;
   margin-bottom: 2rem;
+}
+
+/* モバイル用トップロウ */
+@media (max-width: 768px) {
+  .top-row {
+    margin-bottom: 1rem;
+    gap: 0.5rem;
+  }
+  
+  .stock-waste {
+    gap: 0.5rem;
+  }
+  
+  .foundations {
+    gap: 0.25rem;
+  }
 }
 
 .stock-waste {
@@ -66,11 +112,33 @@
   position: relative;
 }
 
+/* モバイル用タブロー */
+@media (max-width: 768px) {
+  .tableau-row {
+    gap: 0.2rem;
+    min-height: 250px;
+    padding: 0 0.25rem;
+  }
+  
+  .tableau-column {
+    min-width: 45px;
+    flex: 1;
+  }
+}
+
 .pile {
   min-height: 100px;
   min-width: 60px;
   position: relative;
   cursor: pointer;
+}
+
+/* モバイル用パイル */
+@media (max-width: 768px) {
+  .pile {
+    min-height: 60px;
+    min-width: 40px;
+  }
 }
 
 /* ウェイストパイル（山札から引いたカード）の特別なスタイル */
@@ -84,6 +152,19 @@
   position: absolute !important;
   width: 60px;
   height: 80px;
+}
+
+/* モバイル用ウェイストパイル */
+@media (max-width: 768px) {
+  .pile.waste {
+    width: 70px;
+    height: 50px;
+  }
+  
+  .waste-card {
+    width: 40px;
+    height: 50px;
+  }
 }
 
 .pile.empty {
@@ -136,6 +217,23 @@
   height: 80px;
 }
 
+/* モバイル用タブローカラム */
+@media (max-width: 768px) {
+  .tableau-column {
+    min-height: 300px;
+  }
+  
+  .tableau-column .pile {
+    width: 40px;
+    height: 300px;
+  }
+  
+  .tableau-column .tableau-card {
+    width: 40px;
+    height: 50px;
+  }
+}
+
 .tableau-column .face-down {
   /* 裏向きカードは完全に重ねる */
 }
@@ -159,6 +257,16 @@
   position: relative;
   box-shadow: 0 2px 4px rgba(0,0,0,0.2);
   transition: all 0.2s ease;
+}
+
+/* モバイル用カード */
+@media (max-width: 768px) {
+  .card {
+    width: 40px;
+    height: 50px;
+    font-size: 0.7rem;
+    border-radius: 4px;
+  }
 }
 
 .card.face-down {
@@ -223,6 +331,31 @@
   display: block !important;
 }
 
+/* モバイル用カードコーナー */
+@media (max-width: 768px) {
+  .card .card-corner {
+    padding: 0.5px 1px;
+  }
+  
+  .card .card-corner .rank {
+    font-size: 0.6rem !important;
+  }
+  
+  .card .card-corner .suit {
+    font-size: 0.5rem !important;
+  }
+  
+  .card .card-corner.top-left {
+    top: 2px !important;
+    left: 2px !important;
+  }
+  
+  .card .card-corner.bottom-right {
+    bottom: 2px !important;
+    right: 2px !important;
+  }
+}
+
 .card-center {
   display: flex;
   align-items: center;
@@ -256,6 +389,24 @@
   cursor: pointer;
   font-size: 0.875rem;
   transition: background-color 0.2s;
+}
+
+/* モバイル用コントロール */
+@media (max-width: 768px) {
+  .solitaire-controls {
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+    flex-wrap: wrap;
+    padding: 0 0.5rem;
+  }
+  
+  .solitaire-controls button {
+    padding: 0.75rem 1.25rem;
+    font-size: 0.9rem;
+    min-height: 44px; /* タッチフレンドリーなサイズ */
+    flex: 1;
+    max-width: 150px;
+  }
 }
 
 .solitaire-controls button:hover {

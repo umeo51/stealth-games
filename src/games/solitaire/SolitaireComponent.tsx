@@ -1,4 +1,4 @@
-// ソリティアコンポーネント - 裏向きカード表示修正版 v2.4 - ダブルタップ自動移動・自動上がり機能対応
+// ソリティアコンポーネント - 裏向きカード表示修正版 v2.5 - モバイル最適化対応
 import React, { useState, useEffect } from 'react';
 import { SolitaireGame, Card } from './SolitaireGame';
 import './SolitaireComponent.css';
@@ -218,10 +218,14 @@ const SolitaireComponent: React.FC<SolitaireComponentProps> = ({ onGameComplete 
             const isSelected = selectedCard?.pile === pile && selectedCard?.cardIndex === index;
             const isFaceUpCard = card.faceUp;
             
-            // 裏向きカードは15pxずつ、表向きカードは25pxずつずらす
+            // 裏向きカードは15pxずつ、表向きカードは25pxずつずらす（モバイルでは縮小）
+            const isMobile = window.innerWidth <= 768;
+            const faceDownOffset = isMobile ? 10 : 15;
+            const faceUpOffset = isMobile ? 18 : 25;
+            
             const topOffset = isFaceUpCard ? 
-              (pile.cards.slice(0, index).filter((c: Card) => !c.faceUp).length * 15) + (pile.cards.slice(0, index).filter((c: Card) => c.faceUp).length * 25) :
-              index * 15;
+              (pile.cards.slice(0, index).filter((c: Card) => !c.faceUp).length * faceDownOffset) + (pile.cards.slice(0, index).filter((c: Card) => c.faceUp).length * faceUpOffset) :
+              index * faceDownOffset;
             
             return (
               <div
@@ -265,7 +269,7 @@ const SolitaireComponent: React.FC<SolitaireComponentProps> = ({ onGameComplete 
                 className="card-container waste-card"
                 style={{
                   position: 'absolute',
-                  left: `${visibleIndex * 20}px`, // 20pxずつ右にずらす
+                  left: `${visibleIndex * (window.innerWidth <= 768 ? 15 : 20)}px`, // モバイルでは15px、デスクトップでは20pxずつ右にずらす
                   top: '0px',
                   zIndex: index + 1
                 }}
