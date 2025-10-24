@@ -1,4 +1,4 @@
-// ソリティアコンポーネント - 裏向きカード表示修正版 v2.8 - ファウンデーションと山札の位置入れ替え
+// ソリティアコンポーネント - 裏向きカード表示修正版 v2.9 - ストック・ウェイストの配置順序修正
 import React, { useState, useEffect } from 'react';
 import { SolitaireGame, Card } from './SolitaireGame';
 import './SolitaireComponent.css';
@@ -347,7 +347,7 @@ const SolitaireComponent: React.FC<SolitaireComponentProps> = ({ onGameComplete 
       </div>
 
       <div className="solitaire-board">
-        {/* 上段：ファウンデーション、ストック、ウェイスト */}
+        {/* 上段：ファウンデーション、ウェイスト、ストック */}
         <div className="top-row">
           <div className="foundations">
             {gameState.foundation.map((foundation, index) => (
@@ -358,6 +358,14 @@ const SolitaireComponent: React.FC<SolitaireComponentProps> = ({ onGameComplete 
           </div>
           
           <div className="stock-waste">
+            <div className="waste">
+              {gameState.waste.cards.length > 0 ? (
+                renderPile(gameState.waste, undefined, 'waste')
+              ) : (
+                <div className="empty-slot"></div>
+              )}
+            </div>
+            
             <div 
               className="stock"
               onClick={handleStockClick}
@@ -366,14 +374,6 @@ const SolitaireComponent: React.FC<SolitaireComponentProps> = ({ onGameComplete 
                 renderCard(gameState.stock.cards[gameState.stock.cards.length - 1])
               ) : (
                 <div className="empty-slot">🔄</div>
-              )}
-            </div>
-            
-            <div className="waste">
-              {gameState.waste.cards.length > 0 ? (
-                renderPile(gameState.waste, undefined, 'waste')
-              ) : (
-                <div className="empty-slot"></div>
               )}
             </div>
           </div>
