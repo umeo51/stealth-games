@@ -191,6 +191,21 @@
   margin: 0.25rem 0;
 }
 
+/* デスクトップ用説明をモバイルで非表示 */
+.mobile-instructions {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .desktop-instructions {
+    display: none;
+  }
+  
+  .mobile-instructions {
+    display: block;
+  }
+}
+
 .game-result {
   background: #f8f9fa;
   border: 1px solid #dee2e6;

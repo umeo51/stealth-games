@@ -1,3 +1,4 @@
+// マインスイーパーコンポーネント - v1.1 - モバイルダブルタップフラグ機能対応
 import React, { useState, useEffect, useCallback } from 'react';
 import { MinesweeperGame, Difficulty, Cell } from './MinesweeperGame';
 import './MinesweeperComponent.css';
@@ -10,6 +11,7 @@ const MinesweeperComponent: React.FC<MinesweeperComponentProps> = ({ onGameCompl
   const [game, setGame] = useState<MinesweeperGame>(new MinesweeperGame('beginner'));
   const [gameState, setGameState] = useState(game.getGameState());
   const [currentTime, setCurrentTime] = useState(0);
+  const [lastTap, setLastTap] = useState<{ row: number; col: number; time: number } | null>(null);
 
   // ゲーム状態を更新
   const updateGameState = useCallback(() => {
@@ -34,11 +36,50 @@ const MinesweeperComponent: React.FC<MinesweeperComponentProps> = ({ onGameCompl
     return () => clearInterval(interval);
   }, [game]);
 
+  // モバイル用ダブルタップ検出
+  const handleCellTap = (row: number, col: number) => {
+    const now = Date.now();
+    const doubleTapDelay = 300; // 300ms以内のタップをダブルタップとして認識
+    
+    if (lastTap && 
+        lastTap.row === row && 
+        lastTap.col === col && 
+        now - lastTap.time < doubleTapDelay) {
+      // ダブルタップ: フラグを切り替え
+      game.toggleFlag(row, col);
+      setLastTap(null); // ダブルタップ後はリセット
+    } else {
+      // シングルタップ: セルを開く（少し遅延させてダブルタップを待つ）
+      setLastTap({ row, col, time: now });
+      setTimeout(() => {
+        setLastTap(current => {
+          if (current && current.row === row && current.col === col && current.time === now) {
+            // ダブルタップが発生しなかった場合、セルを開く
+            game.clickCell(row, col);
+            updateGameState();
+            return null;
+          }
+          return current;
+        });
+      }, doubleTapDelay);
+    }
+    updateGameState();
+  };
+
   // セルクリック処理
   const handleCellClick = (row: number, col: number, isRightClick: boolean = false) => {
     if (isRightClick) {
       game.toggleFlag(row, col);
     } else {
+      // モバイルデバイスかどうかを判定
+      const isMobile = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+      
+      if (isMobile) {
+        handleCellTap(row, col);
+        return;
+      }
+      
+      // デスクトップでは通常のクリック処理
       game.clickCell(row, col);
     }
     updateGameState();
@@ -172,8 +213,9 @@ const MinesweeperComponent: React.FC<MinesweeperComponentProps> = ({ onGameCompl
         </div>
         
         <div className="game-instructions">
-          <p>左クリック: セルを開く | 右クリック: 旗を立てる</p>
-          <p>中クリック: 数字セルで周辺を一括開示</p>
+          <p className="desktop-instructions">左クリック: セルを開く | 右クリック: 旗を立てる</p>
+          <p className="desktop-instructions">中クリック: 数字セルで周辺を一括開示</p>
+          <p className="mobile-instructions">タップ: セルを開く | ダブルタップ: 旗を立てる</p>
         </div>
       </div>
 
