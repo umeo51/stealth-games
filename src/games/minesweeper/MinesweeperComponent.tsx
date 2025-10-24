@@ -1,4 +1,4 @@
-// マインスイーパーコンポーネント - v1.1 - モバイルダブルタップフラグ機能対応
+// マインスイーパーコンポーネント - v1.2 - 数字セルクリックで一括開示機能対応
 import React, { useState, useEffect, useCallback } from 'react';
 import { MinesweeperGame, Difficulty, Cell } from './MinesweeperGame';
 import './MinesweeperComponent.css';
@@ -40,6 +40,14 @@ const MinesweeperComponent: React.FC<MinesweeperComponentProps> = ({ onGameCompl
   const handleCellTap = (row: number, col: number) => {
     const now = Date.now();
     const doubleTapDelay = 300; // 300ms以内のタップをダブルタップとして認識
+    const cell = gameState.grid[row][col];
+    
+    // 既に開いている数字セルの場合、即座にコードクリックを実行
+    if (cell.isRevealed && cell.neighborMines > 0) {
+      game.chordClick(row, col);
+      updateGameState();
+      return;
+    }
     
     if (lastTap && 
         lastTap.row === row && 
@@ -71,6 +79,15 @@ const MinesweeperComponent: React.FC<MinesweeperComponentProps> = ({ onGameCompl
     if (isRightClick) {
       game.toggleFlag(row, col);
     } else {
+      const cell = gameState.grid[row][col];
+      
+      // 既に開いている数字セルの場合、コードクリックを実行
+      if (cell.isRevealed && cell.neighborMines > 0) {
+        game.chordClick(row, col);
+        updateGameState();
+        return;
+      }
+      
       // モバイルデバイスかどうかを判定
       const isMobile = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
       
@@ -214,8 +231,9 @@ const MinesweeperComponent: React.FC<MinesweeperComponentProps> = ({ onGameCompl
         
         <div className="game-instructions">
           <p className="desktop-instructions">左クリック: セルを開く | 右クリック: 旗を立てる</p>
-          <p className="desktop-instructions">中クリック: 数字セルで周辺を一括開示</p>
+          <p className="desktop-instructions">数字セルクリック: フラグ数が一致すると周辺を一括開示</p>
           <p className="mobile-instructions">タップ: セルを開く | ダブルタップ: 旗を立てる</p>
+          <p className="mobile-instructions">数字セルタップ: フラグ数が一致すると周辺を一括開示</p>
         </div>
       </div>
 
