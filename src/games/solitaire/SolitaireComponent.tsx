@@ -1,4 +1,4 @@
-// ソリティアコンポーネント - 裏向きカード表示修正版 v2.7 - ファウンデーションカード重ね表示対応
+// ソリティアコンポーネント - 裏向きカード表示修正版 v2.8 - ファウンデーションと山札の位置入れ替え
 import React, { useState, useEffect } from 'react';
 import { SolitaireGame, Card } from './SolitaireGame';
 import './SolitaireComponent.css';
@@ -347,8 +347,16 @@ const SolitaireComponent: React.FC<SolitaireComponentProps> = ({ onGameComplete 
       </div>
 
       <div className="solitaire-board">
-        {/* 上段：ストック、ウェイスト、ファウンデーション */}
+        {/* 上段：ファウンデーション、ストック、ウェイスト */}
         <div className="top-row">
+          <div className="foundations">
+            {gameState.foundation.map((foundation, index) => (
+              <div key={index}>
+                {renderPile(foundation, index, 'foundation')}
+              </div>
+            ))}
+          </div>
+          
           <div className="stock-waste">
             <div 
               className="stock"
@@ -368,14 +376,6 @@ const SolitaireComponent: React.FC<SolitaireComponentProps> = ({ onGameComplete 
                 <div className="empty-slot"></div>
               )}
             </div>
-          </div>
-          
-          <div className="foundations">
-            {gameState.foundation.map((foundation, index) => (
-              <div key={index}>
-                {renderPile(foundation, index, 'foundation')}
-              </div>
-            ))}
           </div>
         </div>
 
