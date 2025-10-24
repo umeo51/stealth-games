@@ -1,4 +1,4 @@
-// マインスイーパーコンポーネント - v1.2 - 数字セルクリックで一括開示機能対応
+// マインスイーパーコンポーネント - v1.3 - 数字フォントサイズと視認性向上
 import React, { useState, useEffect, useCallback } from 'react';
 import { MinesweeperGame, Difficulty, Cell } from './MinesweeperGame';
 import './MinesweeperComponent.css';
