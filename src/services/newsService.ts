@@ -24,69 +24,97 @@ export interface NewsResponse {
   data: NewsArticle[];
 }
 
-// モックニュースデータ（開発用）
-const mockNewsData: NewsArticle[] = [
-  {
-    uuid: "1",
-    title: "2025年第1四半期の経済見通し",
-    description: "専門家による最新の経済分析と市場予測をお届けします。",
-    snippet: "専門家による最新の経済分析と市場予測をお届けします。国内外の経済指標を総合的に分析した結果、今四半期は緩やかな成長が期待される一方で、インフレ圧力や地政学的リスクが懸念材料として挙げられています。特に製造業セクターでは原材料価格の上昇が利益率に影響を与える可能性があり、企業の業績予想に注意が必要です。",
+// モックニュースデータ（開発用）- 25件以上のニュース記事
+const mockNewsData: NewsArticle[] = Array.from({ length: 30 }, (_, index) => {
+  const newsTemplates = [
+    {
+      title: "AI技術の最新進歩と産業への影響",
+      description: "人工知能技術の急速な発展が各産業分野に与える変革的影響について詳細に分析します。",
+      categories: ["technology", "ai"],
+      source: "tech-news.jp",
+      imageKeyword: "artificial-intelligence"
+    },
+    {
+      title: "グローバル経済の動向と市場予測",
+      description: "世界経済の最新トレンドと今後の市場動向について専門家による詳細な分析をお届けします。",
+      categories: ["economy", "global"],
+      source: "economic-times.jp",
+      imageKeyword: "global-economy"
+    },
+    {
+      title: "持続可能なビジネス戦略の重要性",
+      description: "ESG投資の拡大に伴い、企業の持続可能な経営戦略がますます重要になっています。",
+      categories: ["sustainability", "business"],
+      source: "green-business.jp",
+      imageKeyword: "sustainability"
+    },
+    {
+      title: "デジタル変革が変える働き方",
+      description: "リモートワークとデジタルツールの普及により、現代の働き方が大きく変化しています。",
+      categories: ["digital", "work"],
+      source: "future-work.jp",
+      imageKeyword: "remote-work"
+    },
+    {
+      title: "新興市場への投資機会と リスク分析",
+      description: "成長著しい新興市場における投資機会とそれに伴うリスクについて詳しく解説します。",
+      categories: ["investment", "emerging-markets"],
+      source: "investment-weekly.jp",
+      imageKeyword: "emerging-markets"
+    },
+    {
+      title: "イノベーション推進のための組織改革",
+      description: "企業がイノベーションを継続的に生み出すための組織体制と文化の変革について。",
+      categories: ["innovation", "management"],
+      source: "innovation-lab.jp",
+      imageKeyword: "innovation"
+    },
+    {
+      title: "サイバーセキュリティの最新脅威と対策",
+      description: "進化するサイバー攻撃に対する最新の防御策と企業が取るべき対応について解説。",
+      categories: ["cybersecurity", "technology"],
+      source: "security-today.jp",
+      imageKeyword: "cybersecurity"
+    },
+    {
+      title: "クリーンエネルギー技術の進展",
+      description: "再生可能エネルギー技術の最新動向と脱炭素社会実現への道筋について分析します。",
+      categories: ["energy", "environment"],
+      source: "clean-energy.jp",
+      imageKeyword: "renewable-energy"
+    },
+    {
+      title: "フィンテック革命と金融業界の未来",
+      description: "金融テクノロジーの進歩が従来の金融サービスに与える影響と今後の展望。",
+      categories: ["fintech", "finance"],
+      source: "fintech-news.jp",
+      imageKeyword: "fintech"
+    },
+    {
+      title: "スマートシティ構想の現状と課題",
+      description: "IoT技術を活用したスマートシティの実現に向けた取り組みと解決すべき課題について。",
+      categories: ["smart-city", "iot"],
+      source: "smart-city.jp",
+      imageKeyword: "smart-city"
+    }
+  ];
+  
+  const template = newsTemplates[index % newsTemplates.length];
+  const hoursAgo = Math.floor(Math.random() * 24) + (index * 2);
+  
+  return {
+    uuid: `news-${index + 1}`,
+    title: `${template.title} ${index > 9 ? `(${Math.floor(index / 10) + 1})` : ''}`,
+    description: template.description,
+    snippet: `${template.description} この記事では、最新の調査結果と専門家の見解を基に、詳細な分析と今後の展望をお届けします。業界の動向を把握し、戦略的な意思決定に役立つ情報を提供いたします。関連する統計データや事例研究も含めて、多角的な視点から解説しています。`,
     url: "#",
-    image_url: "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=400&h=300&fit=crop",
+    image_url: `https://images.unsplash.com/photo-${1500000000 + index}?w=400&h=300&fit=crop&auto=format&q=80`,
     language: "ja",
-    published_at: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
-    source: "business-news.jp",
-    categories: ["business", "economy"]
-  },
-  {
-    uuid: "2",
-    title: "テクノロジー業界の最新動向",
-    description: "AI技術の進歩が各業界に与える影響と、今後の投資機会について分析します。",
-    snippet: "AI技術の進歩が各業界に与える影響と、今後の投資機会について分析します。生成AIの普及により、従来の業務プロセスが大幅に効率化される一方で、新たなスキルセットの需要が高まっています。特に金融、医療、教育分野でのAI活用事例が急増しており、関連企業の株価にも大きな影響を与えています。投資家は技術革新のスピードと規制環境の変化を慎重に見極める必要があります。",
-    url: "#",
-    image_url: "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=400&h=300&fit=crop",
-    language: "ja",
-    published_at: new Date(Date.now() - 4 * 60 * 60 * 1000).toISOString(),
-    source: "tech-today.jp",
-    categories: ["technology", "business"]
-  },
-  {
-    uuid: "3",
-    title: "グローバル市場レポート",
-    description: "世界各国の株式市場の動向と、為替相場の変動要因について詳細に分析。",
-    snippet: "世界各国の株式市場の動向と、為替相場の変動要因について詳細に分析。米国市場では金利政策の転換期を迎え、投資家のリスク選好度に変化が見られます。欧州市場では政治的不安定要因が継続する中、企業業績の二極化が進んでいます。アジア市場では中国経済の回復ペースが注目される中、新興国通貨の動向が重要な指標となっています。",
-    url: "#",
-    image_url: "https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?w=400&h=300&fit=crop",
-    language: "ja",
-    published_at: new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString(),
-    source: "global-markets.jp",
-    categories: ["finance", "global"]
-  },
-  {
-    uuid: "4",
-    title: "新興企業の資金調達動向",
-    description: "スタートアップ企業の最新の資金調達状況と投資トレンドを分析。",
-    snippet: "スタートアップ企業の最新の資金調達状況と投資トレンドを分析。2025年に入り、AI・フィンテック・グリーンテック分野への投資が活発化しています。特にシリーズA段階での調達額が前年比30%増加しており、投資家の関心の高さが伺えます。一方で、収益性を重視する傾向が強まり、事業計画の精査がより厳格になっています。地域別では、東南アジア市場への注目度が高まっています。",
-    url: "#",
-    image_url: "https://images.unsplash.com/photo-1559526324-4b87b5e36e44?w=400&h=300&fit=crop",
-    language: "ja",
-    published_at: new Date(Date.now() - 8 * 60 * 60 * 1000).toISOString(),
-    source: "startup-news.jp",
-    categories: ["startup", "investment"]
-  },
-  {
-    uuid: "5",
-    title: "サステナブル経営の重要性",
-    description: "ESG投資の拡大と企業の持続可能な経営戦略について解説。",
-    snippet: "ESG投資の拡大と企業の持続可能な経営戦略について解説。環境・社会・ガバナンスの観点から企業価値を評価する投資手法が主流となる中、企業は長期的な視点での戦略策定が求められています。特に脱炭素化への取り組みや多様性の推進、透明性の高いガバナンス体制の構築が投資判断の重要な要素となっており、これらの取り組みが企業の競争力向上に直結しています。",
-    url: "#",
-    image_url: "https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=400&h=300&fit=crop",
-    language: "ja",
-    published_at: new Date(Date.now() - 10 * 60 * 60 * 1000).toISOString(),
-    source: "sustainable-biz.jp",
-    categories: ["sustainability", "business"]
-  }
-];
+    published_at: new Date(Date.now() - hoursAgo * 60 * 60 * 1000).toISOString(),
+    source: template.source,
+    categories: template.categories
+  };
+});
 
 class NewsService {
   private apiKey: string | null = null;
@@ -114,8 +142,8 @@ class NewsService {
     }
   }
 
-  // ニュース記事を取得
-  async fetchNews(limit: number = 10): Promise<NewsArticle[]> {
+  // ニュース記事を取得（デフォルトで25件）
+  async fetchNews(limit: number = 25): Promise<NewsArticle[]> {
     // APIキーが設定されていない場合はモックデータを返す
     if (!this.apiKey) {
       console.log('Using mock news data (no API key configured)');

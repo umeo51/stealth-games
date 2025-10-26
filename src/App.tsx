@@ -3,50 +3,15 @@ import SudokuComponent from './games/sudoku/SudokuComponent'
 import SolitaireComponent from './games/solitaire/SolitaireComponent'
 import MinesweeperComponent from './games/minesweeper/MinesweeperComponent'
 import { User } from 'lucide-react'
+import { newsService, NewsArticle } from './services/newsService'
 import './App.css'
-
-// 簡単なニュース記事の型定義
-interface NewsArticle {
-  id: number;
-  title: string;
-  description: string;
-  image_url?: string;
-  source: string;
-  published_at: string;
-}
-
-// モックニュースデータ（修正項目：実際に動作するサムネイル画像付き）
-const mockNews: NewsArticle[] = [
-  {
-    id: 1,
-    title: "最新技術トレンドについて",
-    description: "今年注目すべき技術トレンドをまとめました。AI、クラウド、セキュリティなど幅広い分野での進歩が期待されています。",
-    image_url: "https://picsum.photos/150/100?random=1",
-    source: "Tech News",
-    published_at: "2025-10-10"
-  },
-  {
-    id: 2,
-    title: "ビジネス戦略の新しいアプローチ",
-    description: "デジタル変革時代における効果的なビジネス戦略について専門家が解説します。",
-    image_url: "https://picsum.photos/150/100?random=2",
-    source: "Business Today",
-    published_at: "2025-10-10"
-  },
-  {
-    id: 3,
-    title: "市場分析レポート2025",
-    description: "2025年の市場動向と投資機会について詳細な分析を提供します。",
-    image_url: "https://picsum.photos/150/100?random=3",
-    source: "Market Watch",
-    published_at: "2025-10-10"
-  }
-];
 
 function App() {
   const [gameVisible, setGameVisible] = useState(false);
   const [currentGame, setCurrentGame] = useState<'sudoku' | 'solitaire' | 'minesweeper'>('sudoku');
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+  const [news, setNews] = useState<NewsArticle[]>([]);
+  const [newsLoading, setNewsLoading] = useState(true);
 
   // モバイル表示の検知
   useEffect(() => {
@@ -56,6 +21,27 @@ function App() {
 
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  // ニュースを取得
+  useEffect(() => {
+    const fetchNews = async () => {
+      try {
+        setNewsLoading(true);
+        const newsData = await newsService.fetchNews(25); // 25件以上のニュースを取得
+        setNews(newsData);
+      } catch (error) {
+        console.error('Failed to fetch news:', error);
+      } finally {
+        setNewsLoading(false);
+      }
+    };
+
+    fetchNews();
+    
+    // 10分ごとにニュースを更新
+    const interval = setInterval(fetchNews, 10 * 60 * 1000);
+    return () => clearInterval(interval);
   }, []);
 
   // 数独ゲーム完了ハンドラー
@@ -211,10 +197,19 @@ function App() {
             最新ニュース
           </h2>
           
-          {/* 修正項目：ニュースにサムネイル表示追加 */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: isMobile ? '1rem' : '1.5rem' }}>
-            {mockNews.map((article) => (
-              <div key={article.id} style={{ 
+          {/* ニュース記事一覧 */}
+          {newsLoading ? (
+            <div style={{ 
+              textAlign: 'center', 
+              padding: '2rem',
+              color: '#666'
+            }}>
+              ニュースを読み込み中...
+            </div>
+          ) : (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: isMobile ? '1rem' : '1.5rem' }}>
+              {news.map((article) => (
+              <div key={article.uuid} style={{ 
                 display: 'flex', 
                 flexDirection: isMobile ? 'column' : 'row',
                 gap: isMobile ? '0.75rem' : '1rem',
@@ -233,11 +228,12 @@ function App() {
                       src={article.image_url} 
                       alt={article.title}
                       style={{ 
-                        width: isMobile ? '100%' : '150px', 
-                        maxWidth: isMobile ? '200px' : '150px',
-                        height: isMobile ? 'auto' : '100px', 
+                        width: isMobile ? '100%' : '200px', 
+                        maxWidth: isMobile ? '300px' : '200px',
+                        height: isMobile ? 'auto' : '120px', 
                         objectFit: 'cover',
-                        borderRadius: '4px'
+                        borderRadius: '6px',
+                        boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
                       }}
                       onError={(e) => {
                         // 画像読み込みエラー時のフォールバック
@@ -259,25 +255,46 @@ function App() {
                     {article.title}
                   </h3>
                   <p style={{ 
-                    margin: '0 0 0.5rem 0',
-                    color: '#555',
-                    lineHeight: '1.5',
+                    margin: '0 0 0.75rem 0',
+                    color: '#666',
+                    lineHeight: '1.6',
                     fontSize: isMobile ? '0.9rem' : '1rem',
                     textAlign: isMobile ? 'center' : 'left'
                   }}>
-                    {article.description}
+                    {article.snippet ? article.snippet.substring(0, 200) + '...' : article.description}
                   </p>
                   <div style={{ 
-                    fontSize: isMobile ? '0.8rem' : '0.875rem',
-                    color: '#6c757d',
-                    textAlign: isMobile ? 'center' : 'left'
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    fontSize: '0.8rem',
+                    color: '#888',
+                    borderTop: '1px solid #eee',
+                    paddingTop: '0.5rem'
                   }}>
-                    {article.source} • {article.published_at}
+                    <span style={{ fontWeight: '500' }}>{article.source}</span>
+                    <span>{article.published_at}</span>
                   </div>
                 </div>
               </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
+          
+          {/* ニュース件数表示 */}
+          {!newsLoading && (
+            <div style={{
+              textAlign: 'center',
+              marginTop: '1rem',
+              padding: '0.75rem',
+              backgroundColor: '#f8f9fa',
+              borderRadius: '4px',
+              fontSize: '0.875rem',
+              color: '#666'
+            }}>
+              表示中: {news.length}件のニュース
+            </div>
+          )}
         </div>
 
         {/* ゲームエリア（修正項目：表示幅を1.5倍程度） */}
