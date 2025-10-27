@@ -28,7 +28,7 @@ function App() {
     const fetchNews = async () => {
       try {
         setNewsLoading(true);
-        const newsData = await newsService.fetchNews(25); // 25件以上のニュースを取得
+        const newsData = await newsService.fetchNews(30); // 30件のニュースを取得
         setNews(newsData);
       } catch (error) {
         console.error('Failed to fetch news:', error);
@@ -254,15 +254,22 @@ function App() {
                   }}>
                     {article.title}
                   </h3>
-                  <p style={{ 
+                  <div style={{ 
                     margin: '0 0 0.75rem 0',
                     color: '#666',
-                    lineHeight: '1.6',
+                    lineHeight: '1.7',
                     fontSize: isMobile ? '0.9rem' : '1rem',
                     textAlign: isMobile ? 'center' : 'left'
                   }}>
-                    {article.snippet ? article.snippet.substring(0, 200) + '...' : article.description}
-                  </p>
+                    {(article.snippet || article.description).split('\n').map((line, index) => (
+                      <p key={index} style={{ 
+                        margin: line.trim() === '' ? '0.5rem 0' : '0 0 0.5rem 0',
+                        minHeight: line.trim() === '' ? '0.5rem' : 'auto'
+                      }}>
+                        {line.trim() || '\u00A0'}
+                      </p>
+                    ))}
+                  </div>
                   <div style={{ 
                     display: 'flex',
                     justifyContent: 'space-between',

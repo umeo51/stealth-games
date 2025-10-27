@@ -25,96 +25,115 @@ export interface NewsResponse {
 }
 
 // モックニュースデータ（開発用）- 25件以上のニュース記事
-const mockNewsData: NewsArticle[] = Array.from({ length: 30 }, (_, index) => {
-  const newsTemplates = [
+const mockNewsData: NewsArticle[] = [
+  {
+    uuid: "news-1",
+    title: "AI技術が変革する製造業の未来",
+    description: "人工知能とロボティクスの融合により、製造業の生産性が飛躍的に向上しています。",
+    snippet: "トヨタ自動車は今月、AI搭載の新型ロボットを導入し、生産効率を30%向上させることに成功しました。\n\nこの技術革新により、従来の製造ラインでは不可能だった複雑な作業の自動化が実現。品質管理の精度も大幅に改善されています。\n\n専門家は「これは製造業における第4次産業革命の始まり」と評価しており、今後5年間で関連市場は2倍に拡大すると予測されています。",
+    url: "#",
+    image_url: "https://picsum.photos/400/250?random=1",
+    language: "ja",
+    published_at: "2時間前",
+    source: "TechNews Japan",
+    categories: ["technology", "manufacturing"]
+  },
+  {
+    uuid: "news-2",
+    title: "円安進行で輸出企業の業績好調",
+    description: "為替相場の変動により、日本の主要輸出企業の第3四半期決算が予想を上回る結果となりました。",
+    snippet: "日経平均株価は本日、年初来高値を更新し、3万8000円台に到達しました。\n\n特に自動車メーカーや電子部品企業の株価が大幅上昇。円安効果により海外売上高が押し上げられ、多くの企業が業績予想を上方修正しています。\n\nアナリストは「この傾向は来年前半まで続く可能性が高い」と分析しており、投資家の注目が集まっています。",
+    url: "#",
+    image_url: "https://picsum.photos/400/250?random=2",
+    language: "ja",
+    published_at: "4時間前",
+    source: "Economic Daily",
+    categories: ["economy", "finance"]
+  },
+  {
+    uuid: "news-3",
+    title: "再生可能エネルギー導入が加速",
+    description: "政府の新政策により、太陽光発電と風力発電の設備投資が急速に拡大しています。",
+    snippet: "経済産業省は今日、2030年までに再生可能エネルギーの比率を50%まで引き上げる新目標を発表しました。\n\nこれに伴い、大手電力会社各社は設備投資計画を大幅に見直し。総投資額は今後10年間で15兆円規模に達する見込みです。\n\n環境省の調査によると、この政策により年間CO2排出量を40%削減できると試算されており、国際的な脱炭素目標の達成に大きく貢献すると期待されています。",
+    url: "#",
+    image_url: "https://picsum.photos/400/250?random=3",
+    language: "ja",
+    published_at: "6時間前",
+    source: "Green Energy Times",
+    categories: ["environment", "energy"]
+  },
+  {
+    uuid: "news-4",
+    title: "リモートワーク定着で不動産市場に変化",
+    description: "働き方改革の浸透により、オフィス需要と住宅需要の構造的変化が顕著になっています。",
+    snippet: "不動産大手の調査によると、都心部のオフィス空室率が過去5年で最高水準に達しました。\n\n一方で、郊外の戸建て住宅や地方都市のマンション需要は急増。テレワーク普及により「職住近接」から「職住分離」へのトレンド転換が鮮明になっています。\n\n専門家は「この変化は一時的なものではなく、今後10年間続く構造的変化」と分析。不動産業界では新たなビジネスモデルの構築が急務となっています。",
+    url: "#",
+    image_url: "https://picsum.photos/400/250?random=4",
+    language: "ja",
+    published_at: "8時間前",
+    source: "Real Estate Weekly",
+    categories: ["real-estate", "work"]
+  },
+  {
+    uuid: "news-5",
+    title: "量子コンピューター実用化に向けた大きな進展",
+    description: "IBM社が発表した新型量子プロセッサにより、実用的な量子計算の実現が大幅に前進しました。",
+    snippet: "IBM社は昨日、1000量子ビットを超える新型量子プロセッサの開発に成功したと発表しました。\n\nこの技術により、従来のスーパーコンピューターでは数年かかる計算を数時間で完了できるようになります。特に創薬分野や金融リスク分析での活用が期待されています。\n\n日本でも理化学研究所が同様の研究を進めており、2026年までに商用化を目指すと発表。量子コンピューター市場は2030年までに10兆円規模に成長すると予測されています。",
+    url: "#",
+    image_url: "https://picsum.photos/400/250?random=5",
+    language: "ja",
+    published_at: "10時間前",
+    source: "Science & Technology",
+    categories: ["technology", "science"]
+  }
+];
+
+// 追加のニュース記事を生成（合計30件）
+for (let i = 5; i < 30; i++) {
+  const templates = [
     {
-      title: "AI技術の最新進歩と産業への影響",
-      description: "人工知能技術の急速な発展が各産業分野に与える変革的影響について詳細に分析します。",
-      categories: ["technology", "ai"],
-      source: "tech-news.jp",
-      imageKeyword: "artificial-intelligence"
+      title: "新興企業の資金調達が過去最高額を記録",
+      snippet: "スタートアップ企業への投資額が前年比150%増となり、特にAI・バイオテック分野への注目が高まっています。\n\nベンチャーキャピタル各社は「技術革新のスピードが加速している」と分析しており、今後も積極的な投資を継続する方針です。",
+      source: "Startup News"
     },
     {
-      title: "グローバル経済の動向と市場予測",
-      description: "世界経済の最新トレンドと今後の市場動向について専門家による詳細な分析をお届けします。",
-      categories: ["economy", "global"],
-      source: "economic-times.jp",
-      imageKeyword: "global-economy"
+      title: "食品業界でサステナブル包装が急速普及",
+      snippet: "大手食品メーカーが相次いで環境配慮型パッケージを導入。プラスチック使用量を50%削減する新素材が注目されています。\n\n消費者の環境意識の高まりを受け、小売業界でも同様の取り組みが拡大しており、関連技術への投資が活発化しています。",
+      source: "Food Industry Report"
     },
     {
-      title: "持続可能なビジネス戦略の重要性",
-      description: "ESG投資の拡大に伴い、企業の持続可能な経営戦略がますます重要になっています。",
-      categories: ["sustainability", "business"],
-      source: "green-business.jp",
-      imageKeyword: "sustainability"
+      title: "5G通信網の整備が地方創生を加速",
+      snippet: "高速通信インフラの整備により、地方でのデジタル事業展開が本格化しています。\n\n農業のスマート化や遠隔医療サービスの普及により、地方と都市部の格差縮小が期待されており、政府も支援策を拡充する方針です。",
+      source: "Regional Development"
     },
     {
-      title: "デジタル変革が変える働き方",
-      description: "リモートワークとデジタルツールの普及により、現代の働き方が大きく変化しています。",
-      categories: ["digital", "work"],
-      source: "future-work.jp",
-      imageKeyword: "remote-work"
+      title: "ヘルスケア分野でAI診断システムが実用段階へ",
+      snippet: "医療AI技術の進歩により、画像診断の精度が大幅に向上。早期がん発見率が従来比30%改善しました。\n\n厚生労働省は来年度から医療AI機器の承認手続きを簡素化する方針を発表しており、普及が加速すると予想されています。",
+      source: "Medical Technology"
     },
     {
-      title: "新興市場への投資機会と リスク分析",
-      description: "成長著しい新興市場における投資機会とそれに伴うリスクについて詳しく解説します。",
-      categories: ["investment", "emerging-markets"],
-      source: "investment-weekly.jp",
-      imageKeyword: "emerging-markets"
-    },
-    {
-      title: "イノベーション推進のための組織改革",
-      description: "企業がイノベーションを継続的に生み出すための組織体制と文化の変革について。",
-      categories: ["innovation", "management"],
-      source: "innovation-lab.jp",
-      imageKeyword: "innovation"
-    },
-    {
-      title: "サイバーセキュリティの最新脅威と対策",
-      description: "進化するサイバー攻撃に対する最新の防御策と企業が取るべき対応について解説。",
-      categories: ["cybersecurity", "technology"],
-      source: "security-today.jp",
-      imageKeyword: "cybersecurity"
-    },
-    {
-      title: "クリーンエネルギー技術の進展",
-      description: "再生可能エネルギー技術の最新動向と脱炭素社会実現への道筋について分析します。",
-      categories: ["energy", "environment"],
-      source: "clean-energy.jp",
-      imageKeyword: "renewable-energy"
-    },
-    {
-      title: "フィンテック革命と金融業界の未来",
-      description: "金融テクノロジーの進歩が従来の金融サービスに与える影響と今後の展望。",
-      categories: ["fintech", "finance"],
-      source: "fintech-news.jp",
-      imageKeyword: "fintech"
-    },
-    {
-      title: "スマートシティ構想の現状と課題",
-      description: "IoT技術を活用したスマートシティの実現に向けた取り組みと解決すべき課題について。",
-      categories: ["smart-city", "iot"],
-      source: "smart-city.jp",
-      imageKeyword: "smart-city"
+      title: "宇宙ビジネス市場が急拡大、民間参入が活発化",
+      snippet: "衛星打ち上げコストの大幅削減により、宇宙関連ビジネスへの民間企業参入が相次いでいます。\n\n通信衛星や地球観測衛星の需要が急増しており、関連産業の市場規模は2030年までに現在の3倍に拡大すると予測されています。",
+      source: "Space Business"
     }
   ];
   
-  const template = newsTemplates[index % newsTemplates.length];
-  const hoursAgo = Math.floor(Math.random() * 24) + (index * 2);
+  const template = templates[(i - 5) % templates.length];
+  const hoursAgo = 12 + (i * 2);
   
-  return {
-    uuid: `news-${index + 1}`,
-    title: `${template.title} ${index > 9 ? `(${Math.floor(index / 10) + 1})` : ''}`,
-    description: template.description,
-    snippet: `${template.description} この記事では、最新の調査結果と専門家の見解を基に、詳細な分析と今後の展望をお届けします。業界の動向を把握し、戦略的な意思決定に役立つ情報を提供いたします。関連する統計データや事例研究も含めて、多角的な視点から解説しています。`,
+  mockNewsData.push({
+    uuid: `news-${i + 1}`,
+    title: `${template.title} (${Math.floor(i / 5) + 1})`,
+    description: template.title.substring(0, 50) + "について詳しく解説します。",
+    snippet: template.snippet,
     url: "#",
-    image_url: `https://images.unsplash.com/photo-${1500000000 + index}?w=400&h=300&fit=crop&auto=format&q=80`,
+    image_url: `https://picsum.photos/400/250?random=${i + 1}`,
     language: "ja",
-    published_at: new Date(Date.now() - hoursAgo * 60 * 60 * 1000).toISOString(),
+    published_at: `${hoursAgo}時間前`,
     source: template.source,
-    categories: template.categories
-  };
-});
+    categories: ["business", "technology"]
+  });
+}
 
 class NewsService {
   private apiKey: string | null = null;
@@ -142,8 +161,8 @@ class NewsService {
     }
   }
 
-  // ニュース記事を取得（デフォルトで25件）
-  async fetchNews(limit: number = 25): Promise<NewsArticle[]> {
+  // ニュース記事を取得（デフォルト30件）
+  async fetchNews(limit: number = 30): Promise<NewsArticle[]> {
     // APIキーが設定されていない場合はモックデータを返す
     if (!this.apiKey) {
       console.log('Using mock news data (no API key configured)');
