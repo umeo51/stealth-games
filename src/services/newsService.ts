@@ -34,7 +34,7 @@ const mockNewsData: NewsArticle[] = [
     url: "#",
     image_url: "https://picsum.photos/400/250?random=1",
     language: "ja",
-    published_at: "2時間前",
+    published_at: new Date(Date.now() - 5 * 60 * 1000).toISOString(), // 5分前
     source: "TechNews Japan",
     categories: ["technology", "manufacturing"]
   },
@@ -46,7 +46,7 @@ const mockNewsData: NewsArticle[] = [
     url: "#",
     image_url: "https://picsum.photos/400/250?random=2",
     language: "ja",
-    published_at: "4時間前",
+    published_at: new Date(Date.now() - 12 * 60 * 1000).toISOString(), // 12分前
     source: "Economic Daily",
     categories: ["economy", "finance"]
   },
@@ -58,7 +58,7 @@ const mockNewsData: NewsArticle[] = [
     url: "#",
     image_url: "https://picsum.photos/400/250?random=3",
     language: "ja",
-    published_at: "6時間前",
+    published_at: new Date(Date.now() - 25 * 60 * 1000).toISOString(), // 25分前
     source: "Green Energy Times",
     categories: ["environment", "energy"]
   },
@@ -70,7 +70,7 @@ const mockNewsData: NewsArticle[] = [
     url: "#",
     image_url: "https://picsum.photos/400/250?random=4",
     language: "ja",
-    published_at: "8時間前",
+    published_at: new Date(Date.now() - 45 * 60 * 1000).toISOString(), // 45分前
     source: "Real Estate Weekly",
     categories: ["real-estate", "work"]
   },
@@ -82,7 +82,7 @@ const mockNewsData: NewsArticle[] = [
     url: "#",
     image_url: "https://picsum.photos/400/250?random=5",
     language: "ja",
-    published_at: "10時間前",
+    published_at: new Date(Date.now() - 1 * 60 * 60 * 1000).toISOString(), // 1時間前
     source: "Science & Technology",
     categories: ["technology", "science"]
   }
@@ -119,7 +119,8 @@ for (let i = 5; i < 30; i++) {
   ];
   
   const template = templates[(i - 5) % templates.length];
-  const hoursAgo = 12 + (i * 2);
+  // より新しいニュースにするために時間を短くする
+  const minutesAgo = 30 + (i * 15); // 30分前から開始し、15分ずつ古くする
   
   mockNewsData.push({
     uuid: `news-${i + 1}`,
@@ -129,7 +130,7 @@ for (let i = 5; i < 30; i++) {
     url: "#",
     image_url: `https://picsum.photos/400/250?random=${i + 1}`,
     language: "ja",
-    published_at: `${hoursAgo}時間前`,
+    published_at: new Date(Date.now() - minutesAgo * 60 * 1000).toISOString(),
     source: template.source,
     categories: ["business", "technology"]
   });
@@ -150,7 +151,9 @@ class NewsService {
     const publishedDate = new Date(dateString);
     const diffInMinutes = Math.floor((now.getTime() - publishedDate.getTime()) / (1000 * 60));
 
-    if (diffInMinutes < 60) {
+    if (diffInMinutes < 1) {
+      return "たった今";
+    } else if (diffInMinutes < 60) {
       return `${diffInMinutes}分前`;
     } else if (diffInMinutes < 1440) {
       const hours = Math.floor(diffInMinutes / 60);
