@@ -28,7 +28,7 @@ function App() {
     const fetchNews = async () => {
       try {
         setNewsLoading(true);
-        const newsData = await newsService.fetchNews(30); // 30件のニュースを取得
+        const newsData = await newsService.fetchNews(30, CACHE_VERSION); // 30件のニュースを取得
         setNews(newsData);
       } catch (error) {
         console.error('Failed to fetch news:', error);
@@ -43,6 +43,9 @@ function App() {
     const interval = setInterval(fetchNews, 10 * 60 * 1000);
     return () => clearInterval(interval);
   }, []);
+
+  // キャッシュバスティング用のバージョン
+  const CACHE_VERSION = '1.4.1';
 
   // 数独ゲーム完了ハンドラー
   const handleSudokuComplete = (won: boolean, time: number, difficulty: string) => {

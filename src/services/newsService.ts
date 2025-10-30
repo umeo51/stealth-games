@@ -322,7 +322,11 @@ class NewsService {
   }
 
   // ニュース記事を取得（デフォルト30件）
-  async fetchNews(limit: number = 30): Promise<NewsArticle[]> {
+  async fetchNews(limit: number = 30, cacheVersion?: string): Promise<NewsArticle[]> {
+    // キャッシュバスティング用のログ
+    if (cacheVersion) {
+      console.log(`Fetching news with cache version: ${cacheVersion}`);
+    }
     const allArticles: NewsArticle[] = [];
     
     // 実際のAPIからニュースを取得を試みる
@@ -351,9 +355,14 @@ class NewsService {
     }
     
     // APIが利用できない場合はモックデータを返す
-    console.log('Using mock news data (APIs not available)');
-    return mockNewsData.slice(0, limit).map(article => ({
+    console.log(`Using mock news data (APIs not available) - Cache version: ${cacheVersion || 'none'}`);
+    
+    // キャッシュバスティングのためにユニークIDを追加
+    const cacheId = cacheVersion ? `-${cacheVersion}` : '';
+    
+    return mockNewsData.slice(0, limit).map((article, index) => ({
       ...article,
+      uuid: `${article.uuid}${cacheId}`,
       published_at: this.formatTimeAgo(article.published_at)
     }));
   }
