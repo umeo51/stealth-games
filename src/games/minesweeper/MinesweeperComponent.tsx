@@ -1,4 +1,4 @@
-// マインスイーパーコンポーネント - v1.4 - スマホ長押しフラグ機能実装
+// マインスイーパーコンポーネント - v1.5 - スマホダブルタップフラグ機能実装
 import React, { useState, useEffect, useCallback } from 'react';
 import { MinesweeperGame, Difficulty, Cell } from './MinesweeperGame';
 import './MinesweeperComponent.css';
@@ -12,8 +12,6 @@ const MinesweeperComponent: React.FC<MinesweeperComponentProps> = ({ onGameCompl
   const [gameState, setGameState] = useState(game.getGameState());
   const [currentTime, setCurrentTime] = useState(0);
   const [lastTap, setLastTap] = useState<{ row: number; col: number; time: number } | null>(null);
-  const [longPressTimer, setLongPressTimer] = useState<NodeJS.Timeout | null>(null);
-  const [isLongPress, setIsLongPress] = useState(false);
 
   // ゲーム状態を更新
   const updateGameState = useCallback(() => {
@@ -38,83 +36,78 @@ const MinesweeperComponent: React.FC<MinesweeperComponentProps> = ({ onGameCompl
     return () => clearInterval(interval);
   }, [game]);
 
-  // 長押しタイマーのクリーンアップ
-  useEffect(() => {
-    return () => {
-      if (longPressTimer) {
-        clearTimeout(longPressTimer);
-      }
-    };
-  }, [longPressTimer]);
 
-  // モバイル用長押し検出
-  const handleTouchStart = (row: number, col: number) => {
-    setIsLongPress(false);
-    const timer = setTimeout(() => {
-      setIsLongPress(true);
-      // 長押し: フラグを切り替え
-      game.toggleFlag(row, col);
+
+  // モバイル用ダブルタップ検出
+  const handleCellTap = (row: number, col: number) => {
+    const now = Date.now();
+    const doubleTapDelay = 300; // 300ms以内のタップをダブルタップとして認識
+    const cell = gameState.grid[row][col];
+    
+    // 既に開いている数字セルの場合、即座にコードクリックを実行
+    if (cell.isRevealed && cell.neighborMines > 0) {
+      game.chordClick(row, col);
       updateGameState();
+      return;
+    }
+    
+    if (lastTap && 
+        lastTap.row === row && 
+        lastTap.col === col && 
+        now - lastTap.time < doubleTapDelay) {
+      // ダブルタップ: フラグを切り替え
+      game.toggleFlag(row, col);
+      setLastTap(null); // ダブルタップ後はリセット
       // バイブレーション（対応デバイスのみ）
       if (navigator.vibrate) {
         navigator.vibrate(50);
       }
-    }, 500); // 500ms長押しでフラグ
-    setLongPressTimer(timer);
+    } else {
+      // シングルタップ: セルを開く（少し遅延させてダブルタップを待つ）
+      setLastTap({ row, col, time: now });
+      setTimeout(() => {
+        setLastTap(current => {
+          if (current && current.row === row && current.col === col && current.time === now) {
+            // ダブルタップが発生しなかった場合、セルを開く
+            game.clickCell(row, col);
+            updateGameState();
+            return null;
+          }
+          return current;
+        });
+      }, doubleTapDelay);
+    }
+    updateGameState();
   };
 
-  const handleTouchEnd = (row: number, col: number) => {
-    if (longPressTimer) {
-      clearTimeout(longPressTimer);
-      setLongPressTimer(null);
-    }
-    
-    // 長押しでなかった場合のみセルクリック処理
-    if (!isLongPress) {
-      const cell = gameState.grid[row][col];
-      
-      // 既に開いている数字セルの場合、コードクリックを実行
-      if (cell.isRevealed && cell.neighborMines > 0) {
-        game.chordClick(row, col);
-      } else {
-        game.clickCell(row, col);
-      }
-      updateGameState();
-    }
-    setIsLongPress(false);
-  };
-
-  const handleTouchCancel = () => {
-    if (longPressTimer) {
-      clearTimeout(longPressTimer);
-      setLongPressTimer(null);
-    }
-    setIsLongPress(false);
-  };
-
-  // デスクトップ用セルクリック処理
+  // セルクリック処理
   const handleCellClick = (row: number, col: number) => {
-    // モバイルデバイスの場合はタッチイベントで処理
-    const isMobile = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
-    if (isMobile) {
-      return; // タッチイベントで処理されるため何もしない
-    }
-    
     const cell = gameState.grid[row][col];
     
     // 既に開いている数字セルの場合、コードクリックを実行
     if (cell.isRevealed && cell.neighborMines > 0) {
       game.chordClick(row, col);
-    } else {
-      game.clickCell(row, col);
+      updateGameState();
+      return;
     }
+    
+    // モバイルデバイスかどうかを判定
+    const isMobile = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+    
+    if (isMobile) {
+      handleCellTap(row, col);
+      return;
+    }
+    
+    // デスクトップでは通常のクリック処理
+    game.clickCell(row, col);
     updateGameState();
   };
 
   // セル右クリック処理（デスクトップ用フラグ）
   const handleCellRightClick = (e: React.MouseEvent, row: number, col: number) => {
     e.preventDefault();
-    // モバイルデバイスの場合は何もしない（長押しで処理）
+    // モバイルデバイスの場合は何もしない（ダブルタップで処理）
     const isMobile = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
     if (isMobile) {
       return;
@@ -224,9 +217,7 @@ const MinesweeperComponent: React.FC<MinesweeperComponentProps> = ({ onGameCompl
               onClick={() => handleCellClick(rowIndex, colIndex)}
               onContextMenu={(e) => handleCellRightClick(e, rowIndex, colIndex)}
               onMouseDown={(e) => handleCellMiddleClick(e, rowIndex, colIndex)}
-              onTouchStart={() => handleTouchStart(rowIndex, colIndex)}
-              onTouchEnd={() => handleTouchEnd(rowIndex, colIndex)}
-              onTouchCancel={handleTouchCancel}
+
               disabled={game.isWon() || game.isLost()}
               style={{ userSelect: 'none', WebkitUserSelect: 'none' }}
             >
@@ -252,7 +243,7 @@ const MinesweeperComponent: React.FC<MinesweeperComponentProps> = ({ onGameCompl
         <div className="game-instructions">
           <p className="desktop-instructions">左クリック: セルを開く | 右クリック: 旗を立てる</p>
           <p className="desktop-instructions">数字セルクリック: フラグ数が一致すると周辺を一括開示</p>
-          <p className="mobile-instructions">タップ: セルを開く | 長押し: 旗を立てる</p>
+          <p className="mobile-instructions">タップ: セルを開く | ダブルタップ: 旗を立てる</p>
           <p className="mobile-instructions">数字セルタップ: フラグ数が一致すると周辺を一括開示</p>
         </div>
       </div>
