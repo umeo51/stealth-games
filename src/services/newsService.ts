@@ -24,117 +24,141 @@ export interface NewsResponse {
   data: NewsArticle[];
 }
 
-// モックニュースデータ（開発用）- 25件以上のニュース記事
-const mockNewsData: NewsArticle[] = [
-  {
-    uuid: "news-1",
-    title: "AI技術が変革する製造業の未来",
-    description: "人工知能とロボティクスの融合により、製造業の生産性が飛躍的に向上しています。",
-    snippet: "トヨタ自動車は今月、AI搭載の新型ロボットを導入し、生産効率を30%向上させることに成功しました。\n\nこの技術革新により、従来の製造ラインでは不可能だった複雑な作業の自動化が実現。品質管理の精度も大幅に改善されています。\n\n専門家は「これは製造業における第4次産業革命の始まり」と評価しており、今後5年間で関連市場は2倍に拡大すると予測されています。",
-    url: "#",
-    image_url: "https://picsum.photos/400/250?random=1",
-    language: "ja",
-    published_at: new Date(Date.now() - 5 * 60 * 1000).toISOString(), // 5分前
-    source: "TechNews Japan",
-    categories: ["technology", "manufacturing"]
-  },
-  {
-    uuid: "news-2",
-    title: "日経平均が5万円を突破、史上最高値更新",
-    description: "日経平均株価が初めて5万円を突破し、史上最高値を更新。",
-    snippet: "日経平均株価は本日、初めて5万円を突破し、史上最高値を更新しました。\n\nAI関連株や半導体企業を中心に幅広い業種で上昇。特にトヨタ、ソニー、ソフトバンクグループなどの主要企業が連高を継続しています。\n\n機関投資家は「日本企業の収益性改善とグローバル競争力向上が評価されている」とコメントしています。",
-    url: "#",
-    image_url: "https://picsum.photos/400/250?random=2",
-    language: "ja",
-    published_at: new Date(Date.now() - 12 * 60 * 1000).toISOString(), // 12分前
-    source: "Economic Daily",
-    categories: ["economy", "finance"]
-  },
-  {
-    uuid: "news-3",
-    title: "再生可能エネルギー導入が加速",
-    description: "政府の新政策により、太陽光発電と風力発電の設備投資が急速に拡大しています。",
-    snippet: "経済産業省は今日、2030年までに再生可能エネルギーの比率を50%まで引き上げる新目標を発表しました。\n\nこれに伴い、大手電力会社各社は設備投資計画を大幅に見直し。総投資額は今後10年間で15兆円規模に達する見込みです。\n\n環境省の調査によると、この政策により年間CO2排出量を40%削減できると試算されており、国際的な脱炭素目標の達成に大きく貢献すると期待されています。",
-    url: "#",
-    image_url: "https://picsum.photos/400/250?random=3",
-    language: "ja",
-    published_at: new Date(Date.now() - 25 * 60 * 1000).toISOString(), // 25分前
-    source: "Green Energy Times",
-    categories: ["environment", "energy"]
-  },
-  {
-    uuid: "news-4",
-    title: "ハイブリッドワーク定着でオフィス需要が変化",
-    description: "企業のハイブリッドワーク導入が進み、オフィスの形態が大きく変化。",
-    snippet: "主要企業の8割がハイブリッドワークを正式導入し、オフィスの役割が大きく変化しています。\n\n従来の固定席からフリーアドレスへの移行が加速し、コラボレーションスペースや会議室の需要が高まっています。一方で個人デスクの需要は減少傾向です。\n\n不動産コンサルタントは「オフィスの質と機能性が重視される時代になった」と分析しています。",
-    url: "#",
-    image_url: "https://picsum.photos/400/250?random=4",
-    language: "ja",
-    published_at: new Date(Date.now() - 45 * 60 * 1000).toISOString(), // 45分前
-    source: "Business Today",
-    categories: ["business", "work"]
-  },
-  {
-    uuid: "news-5",
-    title: "生成AI市場が爆発的成長、2025年は20兆円規模へ",
-    description: "生成AI技術の市場規模が急拡大し、2025年には20兆円を超える見通し。",
-    snippet: "生成AI技術の市場規模が爆発的に成長し、2025年には世界で20兆円を超える見通しです。\n\n特に日本企業ではChatGPTやコパイロットなどのビジネス活用が急速に進んでいます。ソフトバンク、NTTデータ、サイバーエージェントなどが独自のAIサービスを続々とリリースしています。\n\nITアナリストは「日本はAI先進国としての地位を確立しつつある」とコメントしています。",
-    url: "#",
-    image_url: "https://picsum.photos/400/250?random=5",
-    language: "ja",
-    published_at: new Date(Date.now() - 1 * 60 * 60 * 1000).toISOString(), // 1時間前
-    source: "Tech Innovation Weekly",
-    categories: ["technology", "ai"]
-  }
-];
-
-// 追加のニュース記事を生成（合計30件）
-for (let i = 5; i < 30; i++) {
-  const templates = [
+// 動的ニュースデータ生成関数
+function generateDynamicNews(): NewsArticle[] {
+  const now = new Date();
+  const currentHour = now.getHours();
+  const currentMinute = now.getMinutes();
+  
+  // 時間帯に応じたニューステンプレート
+  const newsTemplates = [
+    {
+      title: "AI技術が変革する製造業の未来",
+      description: "人工知能とロボティクスの融合により、製造業の生産性が飛躍的に向上しています。",
+      snippet: "トヨタ自動車は今月、AI搭載の新型ロボットを導入し、生産効率を30%向上させることに成功しました。\n\nこの技術革新により、従来の製造ラインでは不可能だった複雑な作業の自動化が実現。品質管理の精度も大幅に改善されています。\n\n専門家は「これは製造業における第4次産業革命の始まり」と評価しており、今後5年間で関連市場は2倍に拡大すると予測されています。",
+      source: "TechNews Japan",
+      categories: ["technology", "manufacturing"]
+    },
+    {
+      title: "日経平均が5万円を突破、史上最高値更新",
+      description: "日経平均株価が初めて5万円を突破し、史上最高値を更新。",
+      snippet: "日経平均株価は本日、初めて5万円を突破し、史上最高値を更新しました。\n\nAI関連株や半導体企業を中心に幅広い業種で上昇。特にトヨタ、ソニー、ソフトバンクグループなどの主要企業が連高を継続しています。\n\n機関投資家は「日本企業の収益性改善とグローバル競争力向上が評価されている」とコメントしています。",
+      source: "Economic Daily",
+      categories: ["economy", "finance"]
+    },
+    {
+      title: "再生可能エネルギー導入が加速",
+      description: "政府の新政策により、太陽光発電と風力発電の設備投資が急速に拡大しています。",
+      snippet: "経済産業省は今日、2030年までに再生可能エネルギーの比率を50%まで引き上げる新目標を発表しました。\n\nこれに伴い、大手電力会社各社は設備投資計画を大幅に見直し。総投資額は今後10年間で15兆円規模に達する見込みです。\n\n環境省の調査によると、この政策により年間CO2排出量を40%削減できると試算されており、国際的な脱炭素目標の達成に大きく貢献すると期待されています。",
+      source: "Green Energy Times",
+      categories: ["environment", "energy"]
+    },
+    {
+      title: "ハイブリッドワーク定着でオフィス需要が変化",
+      description: "企業のハイブリッドワーク導入が進み、オフィスの形態が大きく変化。",
+      snippet: "主要企業の8割がハイブリッドワークを正式導入し、オフィスの役割が大きく変化しています。\n\n従来の固定席からフリーアドレスへの移行が加速し、コラボレーションスペースや会議室の需要が高まっています。一方で個人デスクの需要は減少傾向です。\n\n不動産コンサルタントは「オフィスの質と機能性が重視される時代になった」と分析しています。",
+      source: "Business Today",
+      categories: ["business", "work"]
+    },
+    {
+      title: "生成AI市場が爆発的成長、2025年は20兆円規模へ",
+      description: "生成AI技術の市場規模が急拡大し、2025年には20兆円を超える見通し。",
+      snippet: "生成AI技術の市場規模が爆発的に成長し、2025年には世界で20兆円を超える見通しです。\n\n特に日本企業ではChatGPTやコパイロットなどのビジネス活用が急速に進んでいます。ソフトバンク、NTTデータ、サイバーエージェントなどが独自のAIサービスを続々とリリースしています。\n\nITアナリストは「日本はAI先進国としての地位を確立しつつある」とコメントしています。",
+      source: "Tech Innovation Weekly",
+      categories: ["technology", "ai"]
+    },
     {
       title: "新興企業の資金調達が過去最高額を記録",
-      snippet: "スタートアップ企業への投資額が前年比150%増となり、特にAI・バイオテック分野への注目が高まっています。\n\nベンチャーキャピタル各社は「技術革新のスピードが加速している」と分析しており、今後も積極的な投資を継続する方針です。",
-      source: "Startup News"
+      description: "スタートアップ企業への投資が急増し、特にAI・バイオテック分野が注目。",
+      snippet: "スタートアップ企業への投資額が前年比150%増となり、特にAI・バイオテック分野への注目が高まっています。\n\nベンチャーキャピタル各社は「技術革新のスピードが加速している」と分析しており、今後も積極的な投資を継続する方針です。\n\n政府も「スタートアップ・エコシステム拠点都市」の支援を強化し、イノベーション創出を後押ししています。",
+      source: "Startup News",
+      categories: ["business", "startup"]
     },
     {
       title: "食品業界でサステナブル包装が急速普及",
-      snippet: "大手食品メーカーが相次いで環境配慮型パッケージを導入。プラスチック使用量を50%削減する新素材が注目されています。\n\n消費者の環境意識の高まりを受け、小売業界でも同様の取り組みが拡大しており、関連技術への投資が活発化しています。",
-      source: "Food Industry Report"
+      description: "環境配慮型パッケージの導入が加速し、新素材技術が注目。",
+      snippet: "大手食品メーカーが相次いで環境配慮型パッケージを導入。プラスチック使用量を50%削減する新素材が注目されています。\n\n消費者の環境意識の高まりを受け、小売業界でも同様の取り組みが拡大しており、関連技術への投資が活発化しています。\n\n業界団体は「2030年までに包装材の80%を持続可能な素材に転換する」目標を掲げています。",
+      source: "Food Industry Report",
+      categories: ["environment", "food"]
     },
     {
       title: "5G通信網の整備が地方創生を加速",
-      snippet: "高速通信インフラの整備により、地方でのデジタル事業展開が本格化しています。\n\n農業のスマート化や遠隔医療サービスの普及により、地方と都市部の格差縮小が期待されており、政府も支援策を拡充する方針です。",
-      source: "Regional Development"
+      description: "高速通信インフラにより地方のデジタル化が本格化。",
+      snippet: "高速通信インフラの整備により、地方でのデジタル事業展開が本格化しています。\n\n農業のスマート化や遠隔医療サービスの普及により、地方と都市部の格差縮小が期待されており、政府も支援策を拡充する方針です。\n\n総務省の調査では、5G活用により地方の生産性が平均25%向上すると試算されています。",
+      source: "Regional Development",
+      categories: ["technology", "regional"]
     },
     {
       title: "ヘルスケア分野でAI診断システムが実用段階へ",
-      snippet: "医療AI技術の進歩により、画像診断の精度が大幅に向上。早期がん発見率が従来比30%改善しました。\n\n厚生労働省は来年度から医療AI機器の承認手続きを簡素化する方針を発表しており、普及が加速すると予想されています。",
-      source: "Medical Technology"
+      description: "医療AI技術の進歩により診断精度が大幅に向上。",
+      snippet: "医療AI技術の進歩により、画像診断の精度が大幅に向上。早期がん発見率が従来比30%改善しました。\n\n厚生労働省は来年度から医療AI機器の承認手続きを簡素化する方針を発表しており、普及が加速すると予想されています。\n\n医療従事者からは「診断支援により医師の負担軽減と医療の質向上が同時に実現できる」と期待の声が上がっています。",
+      source: "Medical Technology",
+      categories: ["healthcare", "ai"]
     },
     {
       title: "宇宙ビジネス市場が急拡大、民間参入が活発化",
-      snippet: "衛星打ち上げコストの大幅削減により、宇宙関連ビジネスへの民間企業参入が相次いでいます。\n\n通信衛星や地球観測衛星の需要が急増しており、関連産業の市場規模は2030年までに現在の3倍に拡大すると予測されています。",
-      source: "Space Business"
+      description: "衛星打ち上げコストの削減により宇宙関連ビジネスが急成長。",
+      snippet: "衛星打ち上げコストの大幅削減により、宇宙関連ビジネスへの民間企業参入が相次いでいます。\n\n通信衛星や地球観測衛星の需要が急増しており、関連産業の市場規模は2030年までに現在の3倍に拡大すると予測されています。\n\n宇宙航空研究開発機構（JAXA）も民間企業との連携を強化し、商業宇宙開発を推進しています。",
+      source: "Space Business",
+      categories: ["technology", "space"]
     }
   ];
   
-  const template = templates[(i - 5) % templates.length];
-  // より新しいニュースにするために時間を短くする
-  const minutesAgo = 30 + (i * 15); // 30分前から開始し、15分ずつ古くする
+  // 時間ベースのシード値を生成（10分ごとに変更）
+  const timeSeed = Math.floor(now.getTime() / (10 * 60 * 1000));
   
-  mockNewsData.push({
-    uuid: `news-${i + 1}`,
-    title: `${template.title} (${Math.floor(i / 5) + 1})`,
-    description: template.title.substring(0, 50) + "について詳しく解説します。",
-    snippet: template.snippet,
-    url: "#",
-    image_url: `https://picsum.photos/400/250?random=${i + 1}`,
-    language: "ja",
-    published_at: new Date(Date.now() - minutesAgo * 60 * 1000).toISOString(),
-    source: template.source,
-    categories: ["business", "technology"]
-  });
+  const mockNewsData: NewsArticle[] = [];
+  
+  // 最初の5件は固定テンプレートから選択
+  for (let i = 0; i < 5; i++) {
+    const templateIndex = (i + timeSeed) % newsTemplates.length;
+    const template = newsTemplates[templateIndex];
+    const minutesAgo = 5 + (i * 10) + (timeSeed % 30); // 動的な時間生成
+    
+    mockNewsData.push({
+      uuid: `news-${i + 1}-${timeSeed}`, // 時間ベースのユニークID
+      title: template.title,
+      description: template.description,
+      snippet: template.snippet,
+      url: "#",
+      image_url: `https://picsum.photos/400/250?random=${(i + timeSeed) % 1000}`,
+      language: "ja",
+      published_at: new Date(now.getTime() - minutesAgo * 60 * 1000).toISOString(),
+      source: template.source,
+      categories: template.categories
+    });
+  }
+  
+  // 残りの記事を生成（テンプレートをローテーション）
+  for (let i = 5; i < 30; i++) {
+    const templateIndex = (i + timeSeed + currentHour) % newsTemplates.length;
+    const template = newsTemplates[templateIndex];
+    const variation = Math.floor((i - 5) / newsTemplates.length) + 1;
+    const minutesAgo = 60 + (i * 20) + (timeSeed % 60); // より古い記事
+    
+    mockNewsData.push({
+      uuid: `news-${i + 1}-${timeSeed}`,
+      title: `${template.title}${variation > 1 ? ` (${variation})` : ''}`,
+      description: template.description,
+      snippet: template.snippet,
+      url: "#",
+      image_url: `https://picsum.photos/400/250?random=${(i + timeSeed + currentHour) % 1000}`,
+      language: "ja",
+      published_at: new Date(now.getTime() - minutesAgo * 60 * 1000).toISOString(),
+      source: template.source,
+      categories: template.categories
+    });
+  }
+  
+  return mockNewsData;
 }
+
+// 動的に生成されたモックニュースデータ
+const mockNewsData: NewsArticle[] = [
+// 初期化時に動的データを生成
+];
+
+
 
 class NewsService {
   private newsApiKey: string | null = null;
@@ -354,15 +378,18 @@ class NewsService {
       console.error('Error fetching real news:', error);
     }
     
-    // APIが利用できない場合はモックデータを返す
-    console.log(`Using mock news data (APIs not available) - Cache version: ${cacheVersion || 'none'}`);
+    // APIが利用できない場合は動的モックデータを生成
+    console.log(`Using dynamic mock news data (APIs not available) - Cache version: ${cacheVersion || 'none'}`);
     
-    // キャッシュバスティングのためにユニークIDを追加
-    const cacheId = cacheVersion ? `-${cacheVersion}` : '';
+    // 動的にニュースデータを生成
+    const dynamicNewsData = generateDynamicNews();
     
-    return mockNewsData.slice(0, limit).map((article, index) => ({
+    // 日付でソートして最新順に並べる
+    dynamicNewsData.sort((a, b) => new Date(b.published_at).getTime() - new Date(a.published_at).getTime());
+    
+    // 時間表示をフォーマットして返す
+    return dynamicNewsData.slice(0, limit).map(article => ({
       ...article,
-      uuid: `${article.uuid}${cacheId}`,
       published_at: this.formatTimeAgo(article.published_at)
     }));
   }
