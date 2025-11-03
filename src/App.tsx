@@ -44,8 +44,8 @@ function App() {
     return () => clearInterval(interval);
   }, []);
 
-  // キャッシュバスティング用のバージョン
-  const CACHE_VERSION = '1.4.1';
+  // キャッシュバスティング用のバージョン（リアルタイムニュース対応）
+  const CACHE_VERSION = '2.0.0';
 
   // 数独ゲーム完了ハンドラー
   const handleSudokuComplete = (won: boolean, time: number, difficulty: string) => {

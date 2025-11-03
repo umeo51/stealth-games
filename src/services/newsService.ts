@@ -161,22 +161,18 @@ const mockNewsData: NewsArticle[] = [
 
 
 class NewsService {
-  private newsApiKey: string | null = null;
-  private guardianApiKey: string | null = null;
-  private openaiApiKey: string | null = null;
-  private newsApiUrl = 'https://newsapi.org/v2';
-  private guardianApiUrl = 'https://content.guardianapis.com';
+  private theNewsApiKey: string | null = null;
+  private theNewsApiUrl = 'https://api.thenewsapi.com/v1/news';
 
   constructor() {
-    // 環境変数から各APIキーを取得
-    this.newsApiKey = process.env.REACT_APP_NEWS_API_KEY || null;
-    this.guardianApiKey = process.env.REACT_APP_GUARDIAN_API_KEY || null;
-    this.openaiApiKey = process.env.OPENAI_API_KEY || null;
+    // TheNewsAPI キーを環境変数から取得（開発用は無料プランでも動作）
+    this.theNewsApiKey = process.env.REACT_APP_THE_NEWS_API_KEY || null;
   }
 
   // 英語テキストを日本語に翻訳
   private async translateToJapanese(text: string): Promise<string> {
-    if (!this.openaiApiKey) {
+    const openaiApiKey = process.env.OPENAI_API_KEY || null;
+    if (!openaiApiKey) {
       // APIキーがない場合は簡易翻訳を返す
       return `[翻訳] ${text.substring(0, 100)}...`;
     }
@@ -185,7 +181,7 @@ class NewsService {
       const response = await fetch('https://api.openai.com/v1/chat/completions', {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${this.openaiApiKey}`,
+          'Authorization': `Bearer ${openaiApiKey}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
@@ -236,111 +232,125 @@ class NewsService {
     }
   }
 
-  // NewsAPIからニュースを取得
-  private async fetchFromNewsAPI(limit: number): Promise<NewsArticle[]> {
-    if (!this.newsApiKey) return [];
-
+  // TheNewsAPIからニュースを取得
+  private async fetchFromTheNewsAPI(limit: number): Promise<NewsArticle[]> {
     try {
-      const yesterday = new Date();
-      yesterday.setDate(yesterday.getDate() - 1);
-      const fromDate = yesterday.toISOString().split('T')[0];
+      // APIキーがない場合でも試行（無料プランでテスト可能）
+      const queryParams = new URLSearchParams({
+        'categories': 'business,tech,general',
+        'language': 'en',
+        'limit': Math.min(limit, 100).toString(),
+        'sort': 'published_at'
+      });
+      
+      // APIキーがある場合は追加
+      if (this.theNewsApiKey) {
+        queryParams.append('api_token', this.theNewsApiKey);
+      }
 
-      const response = await fetch(
-        `${this.newsApiUrl}/everything?` +
-        `q=(business OR technology OR economy OR finance)&` +
-        `language=en&` +
-        `from=${fromDate}&` +
-        `sortBy=publishedAt&` +
-        `pageSize=${Math.min(limit, 20)}&` +
-        `apiKey=${this.newsApiKey}`
-      );
+      const response = await fetch(`${this.theNewsApiUrl}/all?${queryParams}`);
 
       if (!response.ok) {
-        throw new Error(`NewsAPI error: ${response.status}`);
+        throw new Error(`TheNewsAPI error: ${response.status}`);
       }
 
       const data = await response.json();
       
+      if (!data.data || !Array.isArray(data.data)) {
+        throw new Error('Invalid response format from TheNewsAPI');
+      }
+      
       const articles: NewsArticle[] = [];
-      for (const article of data.articles.slice(0, limit)) {
+      for (const article of data.data.slice(0, limit)) {
         if (!article.title || !article.description) continue;
         
-        const translatedTitle = await this.translateToJapanese(article.title);
-        const translatedDescription = await this.translateToJapanese(article.description);
+        // 日本語翻訳（OpenAI APIが利用可能な場合）
+        let translatedTitle = article.title;
+        let translatedDescription = article.description;
+        let translatedSnippet = article.snippet || article.description;
+        
+        // 英語記事の場合は翻訳を試行
+        if (article.language === 'en') {
+          try {
+            translatedTitle = await this.translateToJapanese(article.title);
+            translatedDescription = await this.translateToJapanese(article.description);
+            if (article.snippet) {
+              translatedSnippet = await this.translateToJapanese(article.snippet);
+            }
+          } catch (error) {
+            console.log('Translation failed, using original text:', error);
+            // 翻訳に失敗した場合は元のテキストを使用
+          }
+        }
         
         articles.push({
-          uuid: `newsapi-${Date.now()}-${Math.random()}`,
+          uuid: article.uuid || `thenews-${Date.now()}-${Math.random()}`,
           title: translatedTitle,
           description: translatedDescription,
-          snippet: translatedDescription,
+          snippet: translatedSnippet,
           url: article.url || '#',
-          image_url: article.urlToImage || `https://picsum.photos/400/250?random=${Math.floor(Math.random() * 1000)}`,
+          image_url: article.image_url || `https://picsum.photos/400/250?random=${Math.floor(Math.random() * 1000)}`,
           language: 'ja',
-          published_at: article.publishedAt,
-          source: article.source?.name || 'International News',
-          categories: ['business', 'international']
+          published_at: article.published_at,
+          source: article.source || 'International News',
+          categories: article.categories || ['general']
         });
       }
       
       return articles;
     } catch (error) {
-      console.error('NewsAPI fetch error:', error);
+      console.error('TheNewsAPI fetch error:', error);
       return [];
     }
   }
 
-  // Guardian APIからニュースを取得
-  private async fetchFromGuardianAPI(limit: number): Promise<NewsArticle[]> {
-    if (!this.guardianApiKey) return [];
-
+  // 日本語ニュースソースからの取得（補完用）
+  private async fetchJapaneseNews(limit: number): Promise<NewsArticle[]> {
     try {
-      const yesterday = new Date();
-      yesterday.setDate(yesterday.getDate() - 1);
-      const fromDate = yesterday.toISOString().split('T')[0];
+      const queryParams = new URLSearchParams({
+        'categories': 'business,tech,general',
+        'language': 'ja',
+        'limit': Math.min(limit, 50).toString(),
+        'sort': 'published_at'
+      });
+      
+      if (this.theNewsApiKey) {
+        queryParams.append('api_token', this.theNewsApiKey);
+      }
 
-      const response = await fetch(
-        `${this.guardianApiUrl}/search?` +
-        `section=business|technology|world&` +
-        `from-date=${fromDate}&` +
-        `order-by=newest&` +
-        `show-fields=headline,trailText,thumbnail&` +
-        `page-size=${Math.min(limit, 20)}&` +
-        `api-key=${this.guardianApiKey}`
-      );
+      const response = await fetch(`${this.theNewsApiUrl}/all?${queryParams}`);
 
       if (!response.ok) {
-        throw new Error(`Guardian API error: ${response.status}`);
+        throw new Error(`TheNewsAPI Japanese fetch error: ${response.status}`);
       }
 
       const data = await response.json();
       
+      if (!data.data || !Array.isArray(data.data)) {
+        return [];
+      }
+      
       const articles: NewsArticle[] = [];
-      for (const article of data.response.results.slice(0, limit)) {
-        const headline = article.fields?.headline || article.webTitle;
-        const trailText = article.fields?.trailText || '';
-        
-        if (!headline) continue;
-        
-        const translatedTitle = await this.translateToJapanese(headline);
-        const translatedDescription = trailText ? await this.translateToJapanese(trailText) : translatedTitle;
+      for (const article of data.data.slice(0, limit)) {
+        if (!article.title || !article.description) continue;
         
         articles.push({
-          uuid: `guardian-${Date.now()}-${Math.random()}`,
-          title: translatedTitle,
-          description: translatedDescription,
-          snippet: translatedDescription,
-          url: article.webUrl || '#',
-          image_url: article.fields?.thumbnail || `https://picsum.photos/400/250?random=${Math.floor(Math.random() * 1000)}`,
+          uuid: article.uuid || `thenews-jp-${Date.now()}-${Math.random()}`,
+          title: article.title,
+          description: article.description,
+          snippet: article.snippet || article.description,
+          url: article.url || '#',
+          image_url: article.image_url || `https://picsum.photos/400/250?random=${Math.floor(Math.random() * 1000)}`,
           language: 'ja',
-          published_at: article.webPublicationDate,
-          source: 'The Guardian (翻訳)',
-          categories: ['business', 'international']
+          published_at: article.published_at,
+          source: article.source || 'Japanese News',
+          categories: article.categories || ['general']
         });
       }
       
       return articles;
     } catch (error) {
-      console.error('Guardian API fetch error:', error);
+      console.error('Japanese news fetch error:', error);
       return [];
     }
   }
@@ -353,18 +363,22 @@ class NewsService {
     }
     const allArticles: NewsArticle[] = [];
     
-    // 実際のAPIからニュースを取得を試みる
+    // TheNewsAPIから実際のニュースを取得
     try {
-      // NewsAPIから取得
-      const newsApiArticles = await this.fetchFromNewsAPI(Math.floor(limit / 2));
-      allArticles.push(...newsApiArticles);
+      console.log('Fetching real-time news from TheNewsAPI...');
       
-      // Guardian APIから取得
-      const guardianArticles = await this.fetchFromGuardianAPI(Math.floor(limit / 2));
-      allArticles.push(...guardianArticles);
+      // 英語ニュースを取得して翻訳
+      const englishArticles = await this.fetchFromTheNewsAPI(Math.floor(limit * 0.7));
+      allArticles.push(...englishArticles);
+      
+      // 日本語ニュースを直接取得
+      const japaneseArticles = await this.fetchJapaneseNews(Math.floor(limit * 0.3));
+      allArticles.push(...japaneseArticles);
       
       // 実際のニュースが取得できた場合
       if (allArticles.length > 0) {
+        console.log(`Successfully fetched ${allArticles.length} real news articles`);
+        
         // 日付でソートして最新順に並べる
         allArticles.sort((a, b) => new Date(b.published_at).getTime() - new Date(a.published_at).getTime());
         
@@ -375,11 +389,11 @@ class NewsService {
         }));
       }
     } catch (error) {
-      console.error('Error fetching real news:', error);
+      console.error('Error fetching real news from TheNewsAPI:', error);
     }
     
-    // APIが利用できない場合は動的モックデータを生成
-    console.log(`Using dynamic mock news data (APIs not available) - Cache version: ${cacheVersion || 'none'}`);
+    // リアルニュースが取得できない場合のフォールバック
+    console.log(`Real news API unavailable, using dynamic mock data - Cache version: ${cacheVersion || 'none'}`);
     
     // 動的にニュースデータを生成
     const dynamicNewsData = generateDynamicNews();
