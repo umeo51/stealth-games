@@ -165,8 +165,9 @@ class NewsService {
   private theNewsApiUrl = 'https://api.thenewsapi.com/v1/news';
 
   constructor() {
-    // TheNewsAPI キーを環境変数から取得（開発用は無料プランでも動作）
+    // TheNewsAPI キーを環境変数から取得
     this.theNewsApiKey = process.env.REACT_APP_THE_NEWS_API_KEY || null;
+    console.log('TheNewsAPI key loaded:', this.theNewsApiKey ? 'Yes' : 'No');
   }
 
   // 英語テキストを日本語に翻訳
@@ -248,7 +249,7 @@ class NewsService {
         queryParams.append('api_token', this.theNewsApiKey);
       }
 
-      const response = await fetch(`${this.theNewsApiUrl}/all?${queryParams}`);
+      const response = await fetch(`${this.theNewsApiUrl}/all?${queryParams.toString()}`);
 
       if (!response.ok) {
         throw new Error(`TheNewsAPI error: ${response.status}`);
@@ -318,7 +319,7 @@ class NewsService {
         queryParams.append('api_token', this.theNewsApiKey);
       }
 
-      const response = await fetch(`${this.theNewsApiUrl}/all?${queryParams}`);
+      const response = await fetch(`${this.theNewsApiUrl}/all?${queryParams.toString()}`);
 
       if (!response.ok) {
         throw new Error(`TheNewsAPI Japanese fetch error: ${response.status}`);
