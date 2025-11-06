@@ -124,7 +124,7 @@ function generateDynamicNews(): NewsArticle[] {
       image_url: `https://picsum.photos/400/250?random=${(i + timeSeed) % 1000}`,
       language: "ja",
       published_at: new Date(now.getTime() - minutesAgo * 60 * 1000).toISOString(),
-      source: template.source,
+      source: `${template.source} (Dynamic News)`,
       categories: template.categories
     });
   }
@@ -145,7 +145,7 @@ function generateDynamicNews(): NewsArticle[] {
       image_url: `https://picsum.photos/400/250?random=${(i + timeSeed + currentHour) % 1000}`,
       language: "ja",
       published_at: new Date(now.getTime() - minutesAgo * 60 * 1000).toISOString(),
-      source: template.source,
+      source: `${template.source} (Dynamic News)`,
       categories: template.categories
     });
   }
@@ -293,7 +293,7 @@ class NewsService {
           image_url: article.image_url || `https://picsum.photos/400/250?random=${Math.floor(Math.random() * 1000)}`,
           language: 'ja',
           published_at: article.published_at,
-          source: article.source || 'International News',
+          source: article.source ? `${article.source} (via TheNewsAPI)` : 'TheNewsAPI - International News',
           categories: article.categories || ['general']
         });
       }
@@ -344,7 +344,7 @@ class NewsService {
           image_url: article.image_url || `https://picsum.photos/400/250?random=${Math.floor(Math.random() * 1000)}`,
           language: 'ja',
           published_at: article.published_at,
-          source: article.source || 'Japanese News',
+          source: article.source ? `${article.source} (via TheNewsAPI)` : 'TheNewsAPI - Japanese News',
           categories: article.categories || ['general']
         });
       }
