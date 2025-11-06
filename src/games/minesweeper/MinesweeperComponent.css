@@ -112,12 +112,14 @@
 }
 
 .minesweeper-cell.hidden {
-  background: #c0c0c0;
-  border: 2px outset #c0c0c0;
+  background: #e0e0e0;
+  border: 2px outset #e0e0e0;
+  box-shadow: 1px 1px 2px rgba(0,0,0,0.2);
 }
 
 .minesweeper-cell.hidden:hover:not(:disabled) {
-  background: #d0d0d0;
+  background: #f0f0f0;
+  border-color: #f0f0f0;
 }
 
 .minesweeper-cell.hidden:active {
@@ -125,9 +127,10 @@
 }
 
 .minesweeper-cell.revealed {
-  background: #c0c0c0;
-  border: 1px inset #c0c0c0;
+  background: #f8f9fa;
+  border: 1px solid #dee2e6;
   cursor: default;
+  box-shadow: inset 1px 1px 2px rgba(0,0,0,0.1);
 }
 
 .minesweeper-cell.mine {
@@ -136,8 +139,9 @@
 }
 
 .minesweeper-cell.flagged {
-  background: #c0c0c0;
-  border: 2px outset #c0c0c0;
+  background: #fff3cd;
+  border: 2px outset #ffc107;
+  box-shadow: 1px 1px 2px rgba(0,0,0,0.2);
 }
 
 /* 数字の色分け - 視認性向上 */
