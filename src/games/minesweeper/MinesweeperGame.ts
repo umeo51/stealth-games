@@ -26,6 +26,8 @@ export class MinesweeperGame {
   private firstClick: boolean;
   private revealedCount: number;
   private flaggedCount: number;
+  private lives: number;
+  private maxLives: number;
 
   constructor(difficulty: Difficulty = 'beginner') {
     this.config = this.getDifficultyConfig(difficulty);
@@ -36,6 +38,8 @@ export class MinesweeperGame {
     this.firstClick = true;
     this.revealedCount = 0;
     this.flaggedCount = 0;
+    this.maxLives = 3;
+    this.lives = this.maxLives;
     this.initializeGrid();
   }
 
@@ -196,10 +200,17 @@ export class MinesweeperGame {
     const cell = this.grid[row][col];
     
     if (cell.isMine) {
-      // 地雷を踏んだ場合
-      this.gameState = 'lost';
-      this.endTime = Date.now();
-      this.revealAllMines();
+      // 地雷を踏んだ場合 - ライフを減らす
+      this.lives--;
+      cell.isRevealed = true; // 踏んだ地雷だけを表示
+      
+      if (this.lives <= 0) {
+        // ライフが0になったらゲームオーバー
+        this.gameState = 'lost';
+        this.endTime = Date.now();
+        this.revealAllMines();
+      }
+      
       return false;
     } else {
       // 安全なセルの場合
@@ -323,7 +334,9 @@ export class MinesweeperGame {
       remainingMines: this.config.mines - this.flaggedCount,
       timeElapsed: this.startTime ? Math.floor((Date.now() - this.startTime) / 1000) : 0,
       revealedCount: this.revealedCount,
-      flaggedCount: this.flaggedCount
+      flaggedCount: this.flaggedCount,
+      lives: this.lives,
+      maxLives: this.maxLives
     };
   }
 
@@ -339,6 +352,7 @@ export class MinesweeperGame {
     this.firstClick = true;
     this.revealedCount = 0;
     this.flaggedCount = 0;
+    this.lives = this.maxLives;
     this.initializeGrid();
   }
 

@@ -1,4 +1,4 @@
-// マインスイーパーコンポーネント - v1.5 - スマホダブルタップフラグ機能実装
+// マインスイーパーコンポーネント v2.4.0 - ライフシステム（3ライフ、2回までのミス許容）
 import React, { useState, useEffect, useCallback } from 'react';
 import { MinesweeperGame, Difficulty, Cell } from './MinesweeperGame';
 import './MinesweeperComponent.css';
@@ -186,6 +186,11 @@ const MinesweeperComponent: React.FC<MinesweeperComponentProps> = ({ onGameCompl
         <div className="status-item">
           <span className="label">💣</span>
           <span className="value">{gameState.remainingMines}</span>
+        </div>
+        
+        <div className="status-item">
+          <span className="label">❤️</span>
+          <span className="value">{gameState.lives}</span>
         </div>
         
         <button 
