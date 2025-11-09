@@ -1,4 +1,4 @@
-// マインスイーパーコンポーネント v2.4.0 - ライフシステム（3ライフ、2回までのミス許容）
+// マインスイーパーコンポーネント v2.5.0 - ライフシステム＆地雷リセット機能
 import React, { useState, useEffect, useCallback } from 'react';
 import { MinesweeperGame, Difficulty, Cell } from './MinesweeperGame';
 import './MinesweeperComponent.css';

@@ -28,6 +28,7 @@ export class MinesweeperGame {
   private flaggedCount: number;
   private lives: number;
   private maxLives: number;
+  private revealedMines: {row: number, col: number}[];
 
   constructor(difficulty: Difficulty = 'beginner') {
     this.config = this.getDifficultyConfig(difficulty);
@@ -40,6 +41,7 @@ export class MinesweeperGame {
     this.flaggedCount = 0;
     this.maxLives = 3;
     this.lives = this.maxLives;
+    this.revealedMines = [];
     this.initializeGrid();
   }
 
@@ -202,7 +204,8 @@ export class MinesweeperGame {
     if (cell.isMine) {
       // 地雷を踏んだ場合 - ライフを減らす
       this.lives--;
-      cell.isRevealed = true; // 踏んだ地雷だけを表示
+      cell.isRevealed = true; // 踏んだ地雷を一時的に表示
+      this.revealedMines.push({row, col}); // 踏んだ地雷を記録
       
       if (this.lives <= 0) {
         // ライフが0になったらゲームオーバー
@@ -214,6 +217,9 @@ export class MinesweeperGame {
       return false;
     } else {
       // 安全なセルの場合
+      // 先に踏んだ地雷を非表示にする
+      this.hideRevealedMines();
+      
       this.revealCell(row, col);
       
       if (this.checkWinCondition()) {
@@ -236,19 +242,23 @@ export class MinesweeperGame {
       return false;
     }
     
+    // 旗を立てる際にも踏んだ地雷を非表示にする
+    this.hideRevealedMines();
+    
     const cell = this.grid[row][col];
-    cell.isFlagged = !cell.isFlagged;
     
     if (cell.isFlagged) {
-      this.flaggedCount++;
-    } else {
+      cell.isFlagged = false;
       this.flaggedCount--;
+    } else {
+      cell.isFlagged = true;
+      this.flaggedCount++;
     }
     
     return true;
   }
 
-  // 数字セルをクリック（周辺の旗の数が正しい場合、周辺を一括開示）
+  // コードクリック（旗の数が正しい場合、周辺を一括開示）
   chordClick(row: number, col: number): boolean {
     if (
       this.gameState !== 'playing' ||
@@ -340,6 +350,17 @@ export class MinesweeperGame {
     };
   }
 
+  // 踏んだ地雷を非表示にする
+  private hideRevealedMines(): void {
+    for (const minePos of this.revealedMines) {
+      const cell = this.grid[minePos.row][minePos.col];
+      if (cell.isMine && cell.isRevealed) {
+        cell.isRevealed = false;
+      }
+    }
+    this.revealedMines = [];
+  }
+
   // 新しいゲームを開始
   newGame(difficulty?: Difficulty): void {
     if (difficulty) {
@@ -353,6 +374,7 @@ export class MinesweeperGame {
     this.revealedCount = 0;
     this.flaggedCount = 0;
     this.lives = this.maxLives;
+    this.revealedMines = [];
     this.initializeGrid();
   }
 
