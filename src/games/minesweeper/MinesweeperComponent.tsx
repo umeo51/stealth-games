@@ -1,4 +1,4 @@
-// マインスイーパーコンポーネント v2.5.0 - ライフシステム＆地雷リセット機能
+// マインスイーパーコンポーネント v2.6.0 - 改善された地雷リセット＆レイアウト最適化
 import React, { useState, useEffect, useCallback } from 'react';
 import { MinesweeperGame, Difficulty, Cell } from './MinesweeperGame';
 import './MinesweeperComponent.css';
@@ -188,11 +188,6 @@ const MinesweeperComponent: React.FC<MinesweeperComponentProps> = ({ onGameCompl
           <span className="value">{gameState.remainingMines}</span>
         </div>
         
-        <div className="status-item">
-          <span className="label">❤️</span>
-          <span className="value">{gameState.lives}</span>
-        </div>
-        
         <button 
           className="status-face"
           onClick={() => handleNewGame('beginner')}
@@ -200,6 +195,11 @@ const MinesweeperComponent: React.FC<MinesweeperComponentProps> = ({ onGameCompl
         >
           {getGameStatusIcon()}
         </button>
+        
+        <div className="status-item">
+          <span className="label">❤️</span>
+          <span className="value">{gameState.lives}</span>
+        </div>
         
         <div className="status-item">
           <span className="label">⏱️</span>

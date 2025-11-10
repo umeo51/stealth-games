@@ -185,10 +185,19 @@ export class MinesweeperGame {
     if (
       this.gameState !== 'playing' ||
       row < 0 || row >= this.config.rows ||
-      col < 0 || col >= this.config.cols ||
-      this.grid[row][col].isRevealed ||
-      this.grid[row][col].isFlagged
+      col < 0 || col >= this.config.cols
     ) {
+      return false;
+    }
+    
+    // どのセルをクリックしても踏んだ地雷を非表示にする
+    if (this.revealedMines.length > 0) {
+      this.hideRevealedMines();
+      return true; // 地雷リセットのみ実行して終了
+    }
+    
+    // 既に開いているセルやフラグ付きセルの場合は何もしない
+    if (this.grid[row][col].isRevealed || this.grid[row][col].isFlagged) {
       return false;
     }
     
@@ -217,9 +226,6 @@ export class MinesweeperGame {
       return false;
     } else {
       // 安全なセルの場合
-      // 先に踏んだ地雷を非表示にする
-      this.hideRevealedMines();
-      
       this.revealCell(row, col);
       
       if (this.checkWinCondition()) {
