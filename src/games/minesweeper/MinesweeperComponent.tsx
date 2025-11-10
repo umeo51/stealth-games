@@ -267,3 +267,4 @@ const MinesweeperComponent: React.FC<MinesweeperComponentProps> = ({ onGameCompl
 };
 
 export default MinesweeperComponent;
+// Force rebuild Mon Nov 10 05:28:40 EST 2025
