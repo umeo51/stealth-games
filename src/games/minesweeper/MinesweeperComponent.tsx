@@ -182,28 +182,30 @@ const MinesweeperComponent: React.FC<MinesweeperComponentProps> = ({ onGameCompl
         </div>
       </div>
 
-      <div className="minesweeper-status">
-        <div className="status-item">
-          <span className="label">💣</span>
-          <span className="value">{gameState.remainingMines}</span>
+      <div className="game-status-bar-v2">
+        <div className="mines-counter-v2">
+          <span className="icon-v2">💣</span>
+          <span className="count-v2">{gameState.remainingMines}</span>
         </div>
         
         <button 
-          className="status-face"
+          className="face-button-v2"
           onClick={() => handleNewGame('beginner')}
           title="新しいゲーム"
         >
           {getGameStatusIcon()}
         </button>
         
-        <div className="status-item">
-          <span className="label">❤️</span>
-          <span className="value">{gameState.lives}</span>
+        <div className="lives-counter-v2">
+          <span className="icon-v2">❤️</span>
+          <span className="count-v2">{gameState.lives}</span>
         </div>
-        
-        <div className="status-item">
-          <span className="label">⏱️</span>
-          <span className="value">{currentTime}s</span>
+      </div>
+      
+      <div className="timer-row-v2">
+        <div className="timer-display-v2">
+          <span className="icon-v2">⏱️</span>
+          <span className="count-v2">{currentTime}s</span>
         </div>
       </div>
 
